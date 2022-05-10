@@ -1,0 +1,59 @@
+<template>
+  <div>
+    <form v-on:submit="handleSumbit">
+      <input @input="handleChange" :value="username" name="username" type="text" placeholder="username" />
+      <input @input="handleChange" type="password" name="password" placeholder="password" :value="password" />
+      <input @input="handleChange" type="password" name="confirmPassword" placeholder="confirm password" :value="confirmPassword" />
+      <button type="submit" :disabled="!email || !password">Log In</button>
+    </form>
+  </div>
+</template>
+
+<script>
+  import axios from 'axios'
+  // const bcrypt = require('bcrypt')
+  // const SALT_ROUNDS = parseInt(process.env.SALT_ROUNDS)
+
+  export default {
+    name: 'RegisterComponent',
+    props: {
+      user: Object
+    },
+    data: () => ({
+      users: [],
+      username: '',
+      password: '',
+      confirmPassword: ''
+    }),
+    mounted() {
+      this.getUsers()
+    },
+    methods: {
+      async getUsers() {
+        const res = await axios.get('http://localhost:8000/users/')
+        this.users = res.data
+      },
+      async createUser(packagedPayload) {
+        const res = await axios.post('http://localhost:8000/users/', packagedPayload)
+        return res.data
+      },
+      // async hashPassword(password) {
+      //   let hashedPassword = await bcrypt.hash(password, SALT_ROUNDS)
+      //   return hashedPassword
+      // },
+      handleChange(e) {
+        this[e.target.name] = e.target.value
+      },
+      async handleSubmit(e) {
+        e.preventDefault()
+        for (let i = 0; i < this.users.length; i++) {
+          if (this.users[i].username === this.username) {
+            return window.alert('Username already exists')
+          }
+        }
+        // let passwordDigest = await this.hashPassword(this.password)
+        // user = await this.createUser({username: this.username, passwordDigest: passwordDigest})
+      }
+    }
+  }
+</script>
