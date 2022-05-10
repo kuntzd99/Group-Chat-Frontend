@@ -6,6 +6,7 @@
     <h1>Welcome, {{ user.username }}</h1>
     <div v-if="groups.length > 0">
       <h3>Your Groups</h3>
+      <GroupCard v-for="group in groups" :key="group.id" :group="group" @click="() => selectGroup(group.id)" />
     </div>
     <div v-else>
       <h3>No Groups</h3>
@@ -25,9 +26,13 @@
 
 <script>
 import axios from 'axios'
+import GroupCard from '../components/GroupCard'
 
 export default {
   name: 'HomePage',
+  components: {
+    GroupCard
+  },
   data: () => ({
     user: {},
     groups: [],
@@ -35,9 +40,9 @@ export default {
     groupColor: '',
     creatingGroup: false
   }),
-  mounted() {
-    this.getUser()
-    this.getGroups()
+  async mounted() {
+    await this.getUser()
+    await this.getGroups()
   },
   methods: {
     async getUser() {
@@ -55,6 +60,7 @@ export default {
       }
       for (let i = 0; i < groupIds.length; i++) {
         let res = await axios.get(`http://localhost:8000/groups/${groupIds[i]}`)
+        console.log(res.data, 'HOMEPAGE, GROUPS')
         this.groups.push(res.data)
       }
     },
@@ -79,6 +85,9 @@ export default {
       await axios.post('http://localhost:8000/memberships/', {group: newGroup.id, user: this.user.id})
       this.getGroups()
       this.creatingGroup = false
+    },
+    selectGroup(groupId) {
+      this.$router.push(`/groups/${this.user.id}/${groupId}`)
     }
   }
 }
