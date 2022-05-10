@@ -1,10 +1,10 @@
 <template>
   <div>
-    <form v-on:submit="handleSumbit">
+    <form v-on:submit="handleSubmit">
       <input @input="handleChange" :value="username" name="username" type="text" placeholder="username" />
       <input @input="handleChange" type="password" name="password" placeholder="password" :value="password" />
       <input @input="handleChange" type="password" name="confirmPassword" placeholder="confirm password" :value="confirmPassword" />
-      <button type="submit" :disabled="!email || !password">Log In</button>
+      <button type="submit" :disabled="!username || !password || !confirmPassword || password !== confirmPassword">Sign Up</button>
     </form>
   </div>
 </template>
@@ -52,7 +52,9 @@
           }
         }
         // let passwordDigest = await this.hashPassword(this.password)
-        // user = await this.createUser({username: this.username, passwordDigest: passwordDigest})
+        let newUser = await this.createUser({username: this.username, passwordDigest: this.password})
+        this.$emit('setUser', newUser)
+        return this.$router.push(`/home/${newUser.id}`)
       }
     }
   }
