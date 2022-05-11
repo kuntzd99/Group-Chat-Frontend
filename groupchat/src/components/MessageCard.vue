@@ -2,18 +2,22 @@
   <div v-if="message.user === user.id" class="user-message">
     <h6 class="username">{{ message.senderUsername }}</h6>
     <p class="message">{{ message.message }}</p>
-    <div class="reactions"></div>
+    <div class="reactions">
+      <div @click="() => addReaction('like')" class="reaction">{{ numLikes }} &#128077;</div>
+    </div>
   </div>
   <div v-else class="user-message">
     <h6 class="username">{{ message.senderUsername }}</h6>
     <p class="message">{{ message.message }}</p>
     <div class="reactions">
-      <div class="reaction">{{ numLikes }} &#128077;</div>
+      <div @click="() => addReaction('like')" class="reaction">{{ numLikes }} &#128077;</div>
     </div>
   </div>
 </template>
 
 <script>
+import axios from 'axios'
+
 export default {
   name: 'MessageCard',
   props: {
