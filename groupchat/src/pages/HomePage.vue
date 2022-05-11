@@ -52,16 +52,14 @@ export default {
     async getGroups() {
       const groupIds = []
       const res = await axios.get('http://localhost:8000/memberships/')
-      console.log(res.data, 'HOMEPAGE, GETGROUPS METHOD, USER MEMBERSHIPS')
       for (let i = 0; i < res.data.length; i++) {
         if (res.data[i].user === this.user.id) {
           groupIds.push(res.data[i].group)
         }
       }
       for (let i = 0; i < groupIds.length; i++) {
-        let res = await axios.get(`http://localhost:8000/groups/${groupIds[i]}`)
-        console.log(res.data, 'HOMEPAGE, GROUPS')
-        this.groups.push(res.data)
+        let groupRes = await axios.get(`http://localhost:8000/groups/${groupIds[i]}`)
+        this.groups.push(groupRes.data)
       }
     },
     async createGroup(packagedPayload) {
