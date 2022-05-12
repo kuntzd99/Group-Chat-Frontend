@@ -2,9 +2,9 @@
   <div>
     <div id="header">
       <!-- <img :src="profile.image" alt="user" /> -->
-      <h1>{{ profile.username }}</h1>
+      <h1>{{ profileUser.username }}</h1>
     </div>
-      <h3>{{ profile.username }}'s Posts</h3>
+      <h3>{{ profileUser.username }}'s Posts</h3>
       <PostCard v-for="post in posts" :key="post" :post="post" :user="user" />
     <div>
     </div>

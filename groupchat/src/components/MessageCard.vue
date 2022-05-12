@@ -27,6 +27,24 @@
     </div>
     <p>{{ new Date(message.time) }}</p>
   </div>
+  <div v-else-if="posting && clicked" @click="removeFromPostMessages" class="nonuser-message clicked">
+    <h6 class="username">{{ message.senderUsername }}</h6>
+    <p class="message">{{ message.message }}</p>
+    <div class="reactions">
+      <div v-if="!liked" class="reaction">{{ numLikes }} &#128077;</div>
+      <div v-else class="reaction">{{ numLikes }} &#128077;</div>
+    </div>
+    <p>{{ new Date(message.time) }}</p>
+  </div>
+  <div v-else-if="posting && !clicked" @click="addMessage" class="nonuser-message">
+    <h6 class="username">{{ message.senderUsername }}</h6>
+    <p class="message">{{ message.message }}</p>
+    <div class="reactions">
+      <div v-if="!liked" class="reaction">{{ numLikes }} &#128077;</div>
+      <div v-else class="reaction">{{ numLikes }} &#128077;</div>
+    </div>
+    <p>{{ new Date(message.time) }}</p>
+  </div>
   <div v-else class="nonuser-message">
     <h6 class="username">{{ message.senderUsername }}</h6>
     <p class="message">{{ message.message }}</p>
