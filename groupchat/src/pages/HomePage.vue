@@ -6,7 +6,9 @@
     <h1>Welcome, {{ user.username }}</h1>
     <div v-if="groups.length > 0">
       <h3>Your Groups</h3>
-      <GroupCard v-for="group in groups" :key="group.id" :group="group" @click="() => selectGroup(group.id)" />
+      <div class="groups-container">
+        <GroupCard v-for="group in groups" :key="group.id" :group="group" @click="() => selectGroup(group.id)" />
+      </div>
     </div>
     <div v-else>
       <h3>No Groups</h3>
@@ -18,7 +20,10 @@
       <form @submit="handleSubmit">
         <input type="text" :value="groupName" name="groupName" placeholder="Name" @input="handleChange" />
         <input type="color" :value="groupColor" name="groupColor" @input="handleChange" />
-        <button type="submit" :disabled="!groupName || !groupColor">Create Group</button>
+        <div class="button-container">
+          <button @click="toggleCreatingGroup">Cancel</button>
+          <button type="submit" :disabled="!groupName || !groupColor">Create Group</button>
+        </div>
       </form>
     </div>
   </div>
@@ -100,5 +105,17 @@ export default {
 }
 input {
   margin: 0 0.5vh;
+}
+.groups-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.button-container {
+  margin-top: 2vh;
+}
+.button-container button {
+  margin: 0 1vw;
 }
 </style>

@@ -4,7 +4,7 @@
       <!-- <img :src="profile.image" alt="user" /> -->
       <h1>{{ profile.username }}</h1>
     </div>
-      <h3>{{ profile.username }}'s Posts<h3>
+      <h3>{{ profile.username }}'s Posts</h3>
       <PostCard v-for="post in posts" :key="post" :post="post" :user="user" />
     <div>
     </div>
@@ -12,6 +12,7 @@
 </template>
 
 <script>
+import axios from 'axios'
 import PostCard from '../components/PostCard'
 
 export default {
@@ -31,7 +32,7 @@ export default {
   methods: {
     async getUsers() {
       const userRes = await axios.get(`http://localhost:8000/users/${this.$route.params.user_id}`)
-      this.user = res.data
+      this.user = userRes.data
       const profileUserRes = await axios.get(`http://localhost:8000/users/${this.$route.params.profile_id}`)
       this.profileUser = profileUserRes.data
     },

@@ -4,13 +4,24 @@
       <h1>{{ group.name }}</h1>
       <button v-if="group.creator === user.id" @click="deleteGroup">Delete Group</button>
     </div>
-    <div class="messages-box">
-      <MessageCard v-for="message in messages" :key="message.id" :message="message" :user="user" @getMessages="getMessages" />
+    <div class="messages-box" :style="{'background-color': this.group.color}">
+      <MessageCard 
+      v-for="message in messages" 
+      :key="message.id" 
+      :message="message" 
+      :user="user" 
+      @getMessages="getMessages"
+      :posting="posting"
+      @addPostMessage="addPostMessage"
+      @removePostMessage="removePostMessage"
+      />
     </div>
     <form @submit="handleSubmit">
       <textarea @input="handleChange" placeholder="Enter message here" :value="message" name="message" />
       <button type="submit" :disabled="!message">Send</button>
     </form>
+    <button v-if="!posting" @click="togglePosting">Create Post</button>
+    <button v-else :disabled="postMessages.length < 1" @click="createPost">Post Messages</button>
   </div>
 </template>
 
@@ -28,7 +39,9 @@ export default {
     group: {},
     messages: [],
     members: [],
-    message: ''
+    message: '',
+    posting: false,
+    postMessages: []
   }),
   async mounted() {
     await this.getUser()
@@ -97,6 +110,18 @@ export default {
       }
       await axios.delete(`http://localhost:8000/groups/${this.group.id}`)
       return this.$router.push(`/home/${this.user.id}`)
+    },
+    togglePosting() {
+      this.posting = !this.posting
+    },
+    addPostMessage(message) {
+      this.postMessages.push(message)
+    },
+    removePostMessage(message) {
+      const index = this.postMessages.indexOf(message)
+      if (index > -1) {
+        this.postMessages = this.postMessages.splice(index, 1)
+      }
     }
   }
 }
@@ -117,9 +142,23 @@ export default {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  align-items: center;
   text-align: center;
 }
 textarea {
   margin-right: 1vw;
+}
+.messages-box {
+  display: flex;
+  flex-direction: column;
+  border-style: solid;
+  border-radius: 10%;
+  width: 95vw;
+  margin: 5vh 0;
+  min-height: 20vh;
+}
+textarea {
+  width: 80vw;
+  height: 5vh;
 }
 </style>
