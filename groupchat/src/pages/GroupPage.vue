@@ -16,12 +16,18 @@
       @removePostMessage="removePostMessage"
       />
     </div>
-    <form @submit="handleSubmit">
+    <form @submit="handleSubmit" v-if="!posting">
       <textarea @input="handleChange" placeholder="Enter message here" :value="message" name="message" />
       <button type="submit" :disabled="!message">Send</button>
     </form>
-    <button v-if="!posting" @click="togglePosting">Create Post</button>
-    <button v-else :disabled="postMessages.length < 1" @click="createPost">Post Messages</button>
+    <form v-if="posting" @submit="createPost">
+      <textarea @input="handleChange" placeholder="Caption" :value="caption" name="caption" />
+      <div>
+        <button @click="clearPost">Cancel</button>
+        <button :disabled="postMessages.length < 1" type="submit">Post</button>
+      </div>
+    </form>
+    <button v-else @click="togglePosting">Create Post</button>
   </div>
 </template>
 
@@ -41,7 +47,8 @@ export default {
     members: [],
     message: '',
     posting: false,
-    postMessages: []
+    postMessages: [],
+    caption: ''
   }),
   async mounted() {
     await this.getUser()
@@ -122,6 +129,31 @@ export default {
       if (index > -1) {
         this.postMessages = this.postMessages.splice(index, 1)
       }
+    },
+    async createPost(e) {
+      e.preventDefault()
+      const newPost = await axios.post('http://localhost:8000/posts/', 
+      {
+        user: this.user.id,
+        caption: this.caption
+      }
+      )
+      for (let i = 0; i < this.postMessages.length; i++) {
+        await axios.post('http://localhost:8000/postmessages/', 
+        {
+          post: newPost.data.id,
+          message: this.postMessages[i].id
+        }
+        )
+      }
+      this.posting = false
+      this.postMessages = []
+      this.caption = ''
+    },
+    clearPost() {
+      this.posting = false
+      this.postMessages = []
+      this.caption = ''
     }
   }
 }
