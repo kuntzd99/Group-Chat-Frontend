@@ -1,5 +1,6 @@
 <template>
-  <div>
+  <div id="landing-page">
+    <h1>Welcome to Group-Chat</h1>
     <LoginComponent :user="user" @setUser="setUser" />
     <RegisterComponent :user="user" @setUser="setUser" />
   </div>
@@ -15,9 +16,6 @@ export default {
      LoginComponent,
      RegisterComponent
    },
-  //  props: {
-  //    user: Object
-  //  },
    data: () => ({
      user: {}
    }),
@@ -28,3 +26,11 @@ export default {
    }
 }
 </script>
+
+<style>
+  #landing-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+</style>

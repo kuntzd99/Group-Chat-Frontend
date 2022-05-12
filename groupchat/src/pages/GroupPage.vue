@@ -1,8 +1,11 @@
 <template>
-  <div>
-    <h1>{{ group.name }}</h1>
+  <div id="grouppage">
+    <div id="title">
+      <h1>{{ group.name }}</h1>
+      <button v-if="group.creator === user.id" @click="deleteGroup">Delete Group</button>
+    </div>
     <div class="messages-box">
-      <MessageCard v-for="message in messages" :key="message.id" :message="message" :user="user" />
+      <MessageCard v-for="message in messages" :key="message.id" :message="message" :user="user" @getMessages="getMessages" />
     </div>
     <form @submit="handleSubmit">
       <textarea @input="handleChange" placeholder="Enter message here" :value="message" name="message" />
@@ -43,6 +46,7 @@ export default {
       this.group = res.data
     },
     async getMessages() {
+      this.messages = []
       const res = await axios.get('http://localhost:8000/messages/')
       for (let i = 0; i < res.data.length; i++) {
         if (res.data[i].group === this.group.id) {
@@ -83,7 +87,39 @@ export default {
       )
       this.message = ''
       await this.getMessages()
+    },
+    async deleteGroup() {
+      const res = await axios.get('http://localhost:8000/memberships/')
+      for (let i = 0; i < res.data.length; i++) {
+        if (res.data[i].group === this.group.id) {
+          await axios.delete(`http://localhost:8000/memberships/${res.data[i].id}`)
+        }
+      }
+      await axios.delete(`http://localhost:8000/groups/${this.group.id}`)
+      return this.$router.push(`/home/${this.user.id}`)
     }
   }
 }
 </script>
+
+<style scoped>
+#title {
+  display: flex;
+  text-align: center;
+}
+#title button {
+  max-height: 3vh;
+  justify-self: center;
+  align-self: center;
+  margin-left: 1vw;
+}
+#grouppage {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+}
+textarea {
+  margin-right: 1vw;
+}
+</style>

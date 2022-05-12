@@ -1,10 +1,12 @@
 <template>
-  <div v-if="message.user === user.id" class="user-message">
+  <div v-if="message.sender == user.id" class="user-message">
     <h6 class="username">{{ message.senderUsername }}</h6>
     <p class="message">{{ message.message }}</p>
     <div class="reactions">
-      <div @click="() => addReaction('like')" class="reaction">{{ numLikes }} &#128077;</div>
+      <div v-if="!liked" @click="() => addReaction('like')" class="reaction">{{ numLikes }} &#128077;</div>
+      <div v-else @click="() => removeReaction(likedReactionId)" class="reaction">{{ numLikes }} &#128077;</div>
     </div>
+    <button @click="removeMessage" id="delete">Delete message</button>
   </div>
   <div v-else class="nonuser-message">
     <h6 class="username">{{ message.senderUsername }}</h6>
@@ -60,7 +62,34 @@ export default {
       this.liked = false
       this.likedReactionId = -1
       await this.getReactions()
+    },
+    async removeMessage() {
+      const res = await axios.get('http://localhost:8000/reactions/')
+      for (let i = 0; i < res.data.length; i++) {
+        if (res.data[i].message === this.message.id) {
+          await axios.delete(`http://localhost:8000/reactions/${res.data[i].id}`)
+        }
+      }
+      await axios.delete(`http://localhost:8000/messages/${this.message.id}`)
+      this.$emit('getMessages')
     }
   }
 }
 </script>
+
+<style scoped>
+.user-message {
+  border-style: solid;
+  border-radius: 20%;
+  margin: 2vh 0;
+  width: 50vw;
+}
+.nonuser-message {
+  border-style: solid;
+  border-radius: 20%;
+  margin: 2vh 0;
+}
+#delete {
+  margin-bottom: 1vh;
+}
+</style>

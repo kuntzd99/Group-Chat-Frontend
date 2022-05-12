@@ -4,20 +4,20 @@ import LandingPage from './pages/LandingPage'
 // import RegisterComponent from './components/RegisterComponent'
 import HomePage from './pages/HomePage'
 import GroupPage from './pages/GroupPage'
+import ProfilePage from './pages/ProfilePage'
 
 const routes = [
   { path: '/', component: LandingPage, name: 'LandingPage' },
-  // { path: '/login', component: LoginComponent, name: 'LoginComponent' },
-  // {
-  //   path: '/register',
-  //   component: RegisterComponent,
-  //   name: 'RegisterComponent'
-  // },
   { path: '/home/:user_id', component: HomePage, name: 'HomePage' },
   {
     path: '/groups/:user_id/:group_id',
     component: GroupPage,
     name: 'GroupPage'
+  },
+  {
+    path: '/profile/:user_id/:profile_id',
+    component: ProfilePage,
+    name: 'ProfilePage'
   }
 ]
 

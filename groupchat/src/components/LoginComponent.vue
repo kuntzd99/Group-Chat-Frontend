@@ -1,5 +1,6 @@
 <template>
-  <div>
+  <div id="login">
+    <h3>Login</h3>
     <form @submit="handleSubmit">
       <input @input="handleChange" :value="username" type="text" placeholder="username" name="username" />
       <input @input="handleChange" type="password" placeholder="password" :value="password" name="password" />
@@ -61,3 +62,14 @@
     }
   }
 </script>
+
+<style scoped>
+  #login {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  input {
+    margin: 0 0.5vw;
+  }
+</style>

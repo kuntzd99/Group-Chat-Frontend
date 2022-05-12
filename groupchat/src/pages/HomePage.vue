@@ -2,7 +2,7 @@
   <div v-if="Object.keys(user).length === 0">
     <h1>Loading</h1>
   </div>
-  <div v-else>
+  <div v-else id="homepage">
     <h1>Welcome, {{ user.username }}</h1>
     <div v-if="groups.length > 0">
       <h3>Your Groups</h3>
@@ -79,7 +79,7 @@ export default {
           return window.alert('Group already exists')
         }
       }
-      let newGroup = await this.createGroup({name: this.groupName, color: this.groupColor, membersCount: 1})
+      let newGroup = await this.createGroup({name: this.groupName, color: this.groupColor, membersCount: 1, creator: this.user.id})
       await axios.post('http://localhost:8000/memberships/', {group: newGroup.id, user: this.user.id})
       this.getGroups()
       this.creatingGroup = false
@@ -90,3 +90,15 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+#homepage {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+}
+input {
+  margin: 0 0.5vh;
+}
+</style>

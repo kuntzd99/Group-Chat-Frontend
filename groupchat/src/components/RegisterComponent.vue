@@ -1,5 +1,6 @@
 <template>
   <div>
+    <h3>Register</h3>
     <form v-on:submit="handleSubmit">
       <input @input="handleChange" :value="username" name="username" type="text" placeholder="username" />
       <input @input="handleChange" type="password" name="password" placeholder="password" :value="password" />
@@ -59,3 +60,9 @@
     }
   }
 </script>
+
+<style scoped>
+input {
+    margin: 0 0.5vw;
+  }
+</style>

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="group" >
     <!-- <div class="image-wrapper">
       <img :src="game.background_image" :alt="game.name" />
     </div> -->
@@ -18,3 +18,14 @@
     }
   }
 </script>
+
+<style scoped>
+#group {
+  border-style: solid;
+  border-radius: 20%;
+  max-width: 20%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+</style>
