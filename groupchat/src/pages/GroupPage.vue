@@ -2,6 +2,7 @@
   <div id="grouppage">
     <div id="title">
       <h1>{{ group.name }}</h1>
+      <h3>Created by <button @click="goToCreatorProfile">{{ this.creator.username }}</button></h3>
       <button v-if="group.creator === user.id" @click="deleteGroup">Delete Group</button>
     </div>
     <div class="messages-box" :style="{'background-color': this.group.color}">
@@ -48,13 +49,15 @@ export default {
     message: '',
     posting: false,
     postMessages: [],
-    caption: ''
+    caption: '',
+    creator: ''
   }),
   async mounted() {
     await this.getUser()
     await this.getGroup()
     await this.getMessages()
     await this.getMembers()
+    await this.getCreator()
   },
   methods: {
     async getUser() {
@@ -90,6 +93,10 @@ export default {
     async createMessage(packagedPayload) {
       const res = await axios.post('http://localhost:8000/messages/', packagedPayload)
       return res.data
+    },
+    async getCreator() {
+      const res = await axios.get(`http://localhost:8000/users/${this.group.creator}`)
+      this.creator = res.data
     },
     handleChange(e) {
       this[e.target.name] = e.target.value
@@ -154,6 +161,9 @@ export default {
       this.posting = false
       this.postMessages = []
       this.caption = ''
+    },
+    goToCreatorProfile() {
+      this.$router.push(`/profile/${this.user.id}/${this.creator.id}`)
     }
   }
 }
@@ -162,6 +172,7 @@ export default {
 <style scoped>
 #title {
   display: flex;
+  flex-direction: column;
   text-align: center;
 }
 #title button {

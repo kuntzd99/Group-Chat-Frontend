@@ -3,6 +3,10 @@
     <h1>Loading</h1>
   </div>
   <div v-else id="homepage">
+    <div class="header">
+      <button @click="goToProfile">Profile</button>
+      <SearchBar :user="user" />
+    </div>
     <h1>Welcome, {{ user.username }}</h1>
     <div v-if="groups.length > 0">
       <h3>Your Groups</h3>
@@ -19,6 +23,7 @@
     <div v-else>
       <form @submit="handleSubmit">
         <input type="text" :value="groupName" name="groupName" placeholder="Name" @input="handleChange" />
+        <input type="text" :value="groupImage" name="groupImage" placeholder="Image (optional)" @input="handleChange" />
         <input type="color" :value="groupColor" name="groupColor" @input="handleChange" />
         <div class="button-container">
           <button @click="toggleCreatingGroup">Cancel</button>
@@ -30,12 +35,14 @@
 </template>
 
 <script>
+import SearchBar from '../components/SearchBar'
 import axios from 'axios'
 import GroupCard from '../components/GroupCard'
 
 export default {
   name: 'HomePage',
   components: {
+    SearchBar,
     GroupCard
   },
   data: () => ({
@@ -43,6 +50,7 @@ export default {
     groups: [],
     groupName: '',
     groupColor: '',
+    groupImage: '',
     creatingGroup: false
   }),
   async mounted() {
@@ -84,13 +92,22 @@ export default {
           return window.alert('Group already exists')
         }
       }
-      let newGroup = await this.createGroup({name: this.groupName, color: this.groupColor, membersCount: 1, creator: this.user.id})
+      if (this.groupImage === '') {
+        this.groupImage = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR7Zq9-XkMT-p_48geJHZbsWHQkGuWOs5xg5qvLodrdwiQ4Wx6Bo7WIblghxJeWRIQHOcQ&usqp=CAU'
+      }
+      if (this.groupImage.slice(0, 4) !== 'http') {
+        return window.alert('Please copy and paste an image address from the internet')
+      }
+      let newGroup = await this.createGroup({name: this.groupName, color: this.groupColor, membersCount: 1, creator: this.user.id, image: this.groupImage})
       await axios.post('http://localhost:8000/memberships/', {group: newGroup.id, user: this.user.id})
       this.getGroups()
       this.creatingGroup = false
     },
     selectGroup(groupId) {
       this.$router.push(`/groups/${this.user.id}/${groupId}`)
+    },
+    goToProfile() {
+      this.$router.push(`/profile/${this.user.id}/${this.user.id}`)
     }
   }
 }
@@ -117,5 +134,18 @@ input {
 }
 .button-container button {
   margin: 0 1vw;
+}
+.header {
+  background-color: red;
+  height: 5vh;
+  display: flex;
+  align-items: center;
+}
+.header button {
+  margin: 0 2vw;
+  background-color: white;
+  border-color: black;
+  border-radius: 30%;
+  padding: .5vh 1vw;
 }
 </style>

@@ -3,6 +3,8 @@
     <h3>Register</h3>
     <form v-on:submit="handleSubmit">
       <input @input="handleChange" :value="username" name="username" type="text" placeholder="username" />
+      <input @input="handleChange" :value="image" name="image" type="text" placeholder="upload a profile picture (optional)" />
+      <textarea @input="handleChange" :value="bio" name="bio" placeholder="add a bio" />
       <input @input="handleChange" type="password" name="password" placeholder="password" :value="password" />
       <input @input="handleChange" type="password" name="confirmPassword" placeholder="confirm password" :value="confirmPassword" />
       <button type="submit" :disabled="!username || !password || !confirmPassword || password !== confirmPassword">Sign Up</button>
@@ -24,7 +26,9 @@
       users: [],
       username: '',
       password: '',
-      confirmPassword: ''
+      confirmPassword: '',
+      image: '',
+      bio: ''
     }),
     mounted() {
       this.getUsers()
@@ -52,8 +56,14 @@
             return window.alert('Username already exists')
           }
         }
+        if (this.image === '') {
+          this.image = 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'
+        }
+        if (this.image.slice(0, 4) !== 'http') {
+          return window.alert('Please copy and paste an image address from the internet')
+        }
         // let passwordDigest = await this.hashPassword(this.password)
-        let newUser = await this.createUser({username: this.username, passwordDigest: this.password})
+        let newUser = await this.createUser({username: this.username, passwordDigest: this.password, image: this.image, bio: this.bio})
         this.$emit('setUser', newUser)
         return this.$router.push(`/home/${newUser.id}`)
       }
@@ -65,4 +75,17 @@
 input {
     margin: 0 0.5vw;
   }
+form {
+  display: flex;
+  flex-direction: column;
+}
+form input, textarea {
+  margin: 1vh 0;
+  width: 30vw;
+}
+form button {
+  width: 10vw;
+  align-self: center;
+  
+}
 </style>

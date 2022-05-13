@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <header>
-      <NavBar />
+      <!-- <NavBar /> -->
     </header>
     <main>
       <router-view></router-view>
@@ -10,14 +10,14 @@
 </template>
 
 <script>
-  import NavBar from './components/NavBar.vue'
+  // import NavBar from './components/NavBar.vue'
   // import LandingPage from './pages/LandingPage.vue'
   // import HomePage from './pages/HomePage.vue'
 
   export default {
     name: 'App',
     components: {
-      NavBar,
+      // NavBar,
       // LandingPage,
       // HomePage
     }
