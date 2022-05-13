@@ -17,6 +17,10 @@
     <div v-else>
       <h3>No Groups</h3>
     </div>
+    <div v-if="invitationGroups.length > 0">
+      <h3>Invitations</h3>
+      <InvitationCard v-for="invitationGroup in invitationGroups" :key="invitationGroup.id" :user="user" :group="invitationGroup" @getInvitationGroups="getInvitationGroups" />
+    </div>
     <div v-if="!creatingGroup">
       <button @click="toggleCreatingGroup">Create Group</button>
     </div>
@@ -38,12 +42,14 @@
 import SearchBar from '../components/SearchBar'
 import axios from 'axios'
 import GroupCard from '../components/GroupCard'
+import InvitationCard from '../components/InvitationCard'
 
 export default {
   name: 'HomePage',
   components: {
     SearchBar,
-    GroupCard
+    GroupCard,
+    InvitationCard
   },
   data: () => ({
     user: {},
@@ -51,11 +57,13 @@ export default {
     groupName: '',
     groupColor: '',
     groupImage: '',
-    creatingGroup: false
+    creatingGroup: false,
+    invitationGroups: []
   }),
   async mounted() {
     await this.getUser()
     await this.getGroups()
+    await this.getInvitationGroups()
   },
   methods: {
     async getUser() {
@@ -108,6 +116,26 @@ export default {
     },
     goToProfile() {
       this.$router.push(`/profile/${this.user.id}/${this.user.id}`)
+    },
+    async getInvitationGroups() {
+      const groupIds = []
+      const senderIds = []
+      const invitationIds = []
+      const invitationRes = await axios.get('http://localhost:8000/invitations/')
+      for (let i = 0; i < invitationRes.data.length; i++) {
+        if (invitationRes.data[i].user === this.user.id) {
+          groupIds.push(invitationRes.data[i].group)
+          senderIds.push(invitationRes.data[i].sender)
+          invitationIds.push(invitationRes.data[i].id)
+        }
+      }
+      for (let i = 0; i < groupIds.length; i++) {
+        let groupRes = await axios.get(`http://localhost:8000/groups/${groupIds[i]}`)
+        let invitationGroup = groupRes.data
+        invitationGroup['senderId'] = senderIds.shift()
+        invitationGroup['invitationId'] = invitationIds.shift()
+        this.invitationGroups.push(invitationGroup)
+      }
     }
   }
 }

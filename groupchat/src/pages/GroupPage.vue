@@ -1,5 +1,9 @@
 <template>
   <div id="grouppage">
+    <div class="header">
+      <button @click="goToProfile">Profile</button>
+      <SearchBar :user="user" />
+    </div>
     <div id="title">
       <h1>{{ group.name }}</h1>
       <h3>Created by <button @click="goToCreatorProfile">{{ this.creator.username }}</button></h3>
@@ -29,17 +33,24 @@
       </div>
     </form>
     <button v-else @click="togglePosting">Create Post</button>
+    <h3>Members:</h3>
+    <!-- <MemberCard v-for="member in members" :key="member.id" /> -->
+    <button>Send Invitation</button>
   </div>
 </template>
 
 <script>
 import axios from 'axios'
 import MessageCard from '../components/MessageCard.vue'
+// import MemberCard from '../components/MemberCard.vue'
+import SearchBar from '../components/SearchBar.vue'
 
 export default {
   name: 'GroupPage',
   components: {
-    MessageCard
+    MessageCard,
+    // MemberCard,
+    SearchBar
   },
   data: () => ({
     user: {},
@@ -199,9 +210,24 @@ textarea {
   width: 95vw;
   margin: 5vh 0;
   min-height: 20vh;
+  height: 60vh;
 }
 textarea {
   width: 80vw;
   height: 5vh;
+}
+.header {
+  background-color: red;
+  height: 5vh;
+  display: flex;
+  align-items: center;
+  width: 100vw;
+}
+.header button {
+  margin: 0 2vw;
+  background-color: white;
+  border-color: black;
+  border-radius: 30%;
+  padding: .5vh 1vw;
 }
 </style>

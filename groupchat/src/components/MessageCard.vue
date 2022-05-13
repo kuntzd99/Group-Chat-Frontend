@@ -4,7 +4,11 @@
     <p class="message">{{ message.message }}</p>
     <div class="reactions">
       <div v-if="!liked" @click="() => addReaction('like')" class="reaction">{{ numLikes }} &#128077;</div>
-      <div v-else @click="() => removeReaction(likedReactionId)" class="reaction">{{ numLikes }} &#128077;</div>
+      <div v-else @click="() => removeLike(likedReactionId)" class="reaction">{{ numLikes }} &#128077;</div>
+      <div v-if="!disliked" @click="() => addReaction('dislike')" class="reaction">{{ numDislikes }} &#128078;</div>
+      <div v-else @click="() => removeDislike(dislikedReactionId)" class="reaction">{{ numDislikes }} &#128078;</div>
+      <div v-if="!laughing" @click="() => addReaction('laugh')" class="reaction">{{ numLaughs }} &#128514;</div>
+      <div v-else @click="() => removeLaugh(laughingReactionId)" class="reaction">{{ numLaughs }} &#128514;</div>
     </div>
     <button @click="removeMessage" id="delete">Delete message</button>
     <p>{{ new Date(message.time) }}</p>
@@ -13,8 +17,9 @@
     <h6 class="username">{{ message.senderUsername }}</h6>
     <p class="message">{{ message.message }}</p>
     <div class="reactions">
-      <div v-if="!liked" class="reaction">{{ numLikes }} &#128077;</div>
-      <div v-else class="reaction">{{ numLikes }} &#128077;</div>
+      <div class="reaction">{{ numLikes }} &#128077;</div>
+      <div class="reaction">{{ numDislikes }} &#128078;</div>
+      <div class="reaction">{{ numLaughs }} &#128514;</div>
     </div>
     <p>{{ new Date(message.time) }}</p>
   </div>
@@ -22,8 +27,9 @@
     <h6 class="username">{{ message.senderUsername }}</h6>
     <p class="message">{{ message.message }}</p>
     <div class="reactions">
-      <div v-if="!liked" class="reaction">{{ numLikes }} &#128077;</div>
-      <div v-else class="reaction">{{ numLikes }} &#128077;</div>
+      <div class="reaction">{{ numLikes }} &#128077;</div>
+      <div class="reaction">{{ numDislikes }} &#128078;</div>
+      <div class="reaction">{{ numLaughs }} &#128514;</div>
     </div>
     <p>{{ new Date(message.time) }}</p>
   </div>
@@ -31,8 +37,9 @@
     <h6 class="username">{{ message.senderUsername }}</h6>
     <p class="message">{{ message.message }}</p>
     <div class="reactions">
-      <div v-if="!liked" class="reaction">{{ numLikes }} &#128077;</div>
-      <div v-else class="reaction">{{ numLikes }} &#128077;</div>
+      <div class="reaction">{{ numLikes }} &#128077;</div>
+      <div class="reaction">{{ numDislikes }} &#128078;</div>
+      <div class="reaction">{{ numLaughs }} &#128514;</div>
     </div>
     <p>{{ new Date(message.time) }}</p>
   </div>
@@ -40,8 +47,9 @@
     <h6 class="username">{{ message.senderUsername }}</h6>
     <p class="message">{{ message.message }}</p>
     <div class="reactions">
-      <div v-if="!liked" class="reaction">{{ numLikes }} &#128077;</div>
-      <div v-else class="reaction">{{ numLikes }} &#128077;</div>
+      <div class="reaction">{{ numLikes }} &#128077;</div>
+      <div class="reaction">{{ numDislikes }} &#128078;</div>
+      <div class="reaction">{{ numLaughs }} &#128514;</div>
     </div>
     <p>{{ new Date(message.time) }}</p>
   </div>
@@ -50,7 +58,11 @@
     <p class="message">{{ message.message }}</p>
     <div class="reactions">
       <div v-if="!liked" @click="() => addReaction('like')" class="reaction">{{ numLikes }} &#128077;</div>
-      <div v-else @click="() => removeReaction(likedReactionId)" class="reaction">{{ numLikes }} &#128077;</div>
+      <div v-else @click="() => removeLike(likedReactionId)" class="reaction">{{ numLikes }} &#128077;</div>
+      <div v-if="!disliked" @click="() => addReaction('dislike')" class="reaction">{{ numDislikes }} &#128078;</div>
+      <div v-else @click="() => removeDislike(dislikedReactionId)" class="reaction">{{ numDislikes }} &#128078;</div>
+      <div v-if="!laughing" @click="() => addReaction('laughing')" class="reaction">{{ numLaughs }} &#128514;</div>
+      <div v-else @click="() => removeLaugh(laughingReactionId)" class="reaction">{{ numLaughs }} &#128514;</div>
     </div>
     <p>{{ new Date(message.time) }}</p>
   </div>
@@ -70,8 +82,14 @@ export default {
   data: () => ({
     reactions: [],
     numLikes: 0,
+    numDislikes: 0,
+    numLaughs: 0,
     liked: false,
+    disliked: false,
+    laughing: false,
     likedReactionId: -1,
+    dislikedReactionId: -1,
+    laughingReactionId: -1,
     clicked: false
   }),
   async mounted() {
@@ -80,6 +98,8 @@ export default {
   methods: {
     async getReactions() {
       this.numLikes = 0
+      this.numDislikes = 0
+      this.numLaughs = 0
       const res = await axios.get('http://localhost:8000/reactions/')
       for (let i = 0; i < res.data.length; i++) {
         if (res.data[i].message === this.message.id) {
@@ -91,6 +111,20 @@ export default {
               this.likedReactionId = res.data[i].id
             }
           }
+          else if (res.data[i].type === 'dislike') {
+            this.numDislikes++
+            if (res.data[i].user === this.user.id) {
+              this.disliked = true
+              this.dislikedReactionId = res.data[i].id
+            }
+          }
+          else if (res.data[i].type === 'laugh') {
+            this.numLaughs++
+            if (res.data[i].user === this.user.id) {
+              this.laughing = true
+              this.laughingReactionId = res.data[i].id
+            }
+          }
         }
       }
     },
@@ -98,10 +132,22 @@ export default {
       await axios.post('http://localhost:8000/reactions/', {type: type, user: this.user.id, username: this.user.username, message: this.message.id})
       await this.getReactions()
     },
-    async removeReaction(reactionId) {
+    async removeLike(reactionId) {
       await axios.delete(`http://localhost:8000/reactions/${reactionId}`)
       this.liked = false
       this.likedReactionId = -1
+      await this.getReactions()
+    },
+    async removeDislike(reactionId) {
+      await axios.delete(`http://localhost:8000/reactions/${reactionId}`)
+      this.disliked = false
+      this.dislikedReactionId = -1
+      await this.getReactions()
+    },
+    async removeLaugh(reactionId) {
+      await axios.delete(`http://localhost:8000/reactions/${reactionId}`)
+      this.laughing = false
+      this.laughingReactionId = -1
       await this.getReactions()
     },
     async removeMessage() {
@@ -145,11 +191,26 @@ export default {
   align-self: flex-start;
   background-color: white
 }
+.user-message, .nonuser-message {
+  margin: 2vh 1vw;
+}
 #delete {
   margin-bottom: 1vh;
 }
 .clicked {
   border-style: solid;
   border-color: yellow;
+}
+.reactions {
+  display: flex;
+  justify-content: center;
+  padding-bottom: 0.5vh;
+}
+.reaction {
+  border-style: solid;
+  margin: 0 1vw;
+  padding: 0.5vh 1vw;
+  border-radius: 50%;
+  border-width: 2px;
 }
 </style>

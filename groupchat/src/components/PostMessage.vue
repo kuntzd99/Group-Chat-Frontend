@@ -3,8 +3,9 @@
     <h6 class="username">{{ message.senderUsername }}</h6>
     <p class="message">{{ message.message }}</p>
     <div class="reactions">
-      <div v-if="!liked" @click="() => addReaction('like')" class="reaction">{{ numLikes }} &#128077;</div>
-      <div v-else @click="() => removeReaction(likedReactionId)" class="reaction">{{ numLikes }} &#128077;</div>
+      <div class="reaction">{{ numLikes }} &#128077;</div>
+      <div class="reaction">{{ numDislikes }} &#128078;</div>
+      <div class="reaction">{{ numLaughs }} &#128514;</div>
     </div>
     <p>{{ new Date(message.time) }}</p>
   </div>
@@ -12,8 +13,9 @@
     <h6 class="username">{{ message.senderUsername }}</h6>
     <p class="message">{{ message.message }}</p>
     <div class="reactions">
-      <div v-if="!liked" @click="() => addReaction('like')" class="reaction">{{ numLikes }} &#128077;</div>
-      <div v-else @click="() => removeReaction(likedReactionId)" class="reaction">{{ numLikes }} &#128077;</div>
+      <div class="reaction">{{ numLikes }} &#128077;</div>
+      <div class="reaction">{{ numDislikes }} &#128078;</div>
+      <div class="reaction">{{ numLaughs }} &#128514;</div>
     </div>
     <p>{{ new Date(message.time) }}</p>
   </div>
