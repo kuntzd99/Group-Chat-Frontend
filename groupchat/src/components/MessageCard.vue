@@ -1,16 +1,22 @@
 <template>
   <div v-if="message.sender == user.id && !posting" class="user-message">
-    <h6 class="username">{{ message.senderUsername }}</h6>
-    <p class="message">{{ message.message }}</p>
-    <div class="reactions">
-      <div v-if="!liked" @click="() => addReaction('like')" class="reaction">{{ numLikes }} &#128077;</div>
-      <div v-else @click="() => removeLike(likedReactionId)" class="reaction">{{ numLikes }} &#128077;</div>
-      <div v-if="!disliked" @click="() => addReaction('dislike')" class="reaction">{{ numDislikes }} &#128078;</div>
-      <div v-else @click="() => removeDislike(dislikedReactionId)" class="reaction">{{ numDislikes }} &#128078;</div>
-      <div v-if="!laughing" @click="() => addReaction('laugh')" class="reaction">{{ numLaughs }} &#128514;</div>
-      <div v-else @click="() => removeLaugh(laughingReactionId)" class="reaction">{{ numLaughs }} &#128514;</div>
+    <div class="message-body">
+      <div class="username-with-button">
+        <button @click="removeMessage">Delete</button>
+        <h6>{{ message.senderUsername }}</h6>
+      </div>
+      <div class="message">
+        <p>{{ message.message }}</p>
+      </div>
+      <div class="reactions">
+        <div v-if="!liked" @click="() => addReaction('like')" class="reaction">{{ numLikes }} &#128077;</div>
+        <div v-else @click="() => removeLike(likedReactionId)" class="reaction">{{ numLikes }} &#128077;</div>
+        <div v-if="!disliked" @click="() => addReaction('dislike')" class="reaction">{{ numDislikes }} &#128078;</div>
+        <div v-else @click="() => removeDislike(dislikedReactionId)" class="reaction">{{ numDislikes }} &#128078;</div>
+        <div v-if="!laughing" @click="() => addReaction('laugh')" class="reaction">{{ numLaughs }} &#128514;</div>
+        <div v-else @click="() => removeLaugh(laughingReactionId)" class="reaction">{{ numLaughs }} &#128514;</div>
+      </div>
     </div>
-    <button @click="removeMessage" id="delete">Delete message</button>
     <p>{{ new Date(message.time) }}</p>
   </div>
   <div v-else-if="message.sender == user.id && posting && !clicked" @click="addMessage" class="user-message">
@@ -176,13 +182,15 @@ export default {
 </script>
 
 <style scoped>
-.user-message {
-  border-style: solid;
-  border-radius: 20%;
-  margin: 2vh 0;
-  width: 50vw;
-  align-self: flex-end;
+.message-body {
   background-color: white;
+  border-style: solid;
+}
+.user-message {
+  width: 45vw;
+  height: auto;
+  align-self: flex-end;
+  margin: 2vh 1vw 0.5vh 0;
 }
 .nonuser-message {
   border-style: solid;
@@ -190,12 +198,6 @@ export default {
   margin: 2vh 0;
   align-self: flex-start;
   background-color: white
-}
-.user-message, .nonuser-message {
-  margin: 2vh 1vw;
-}
-#delete {
-  margin-bottom: 1vh;
 }
 .clicked {
   border-style: solid;
@@ -209,8 +211,38 @@ export default {
 .reaction {
   border-style: solid;
   margin: 0 1vw;
-  padding: 0.5vh 1vw;
+  padding: 0.25vh 0.5vw;
   border-radius: 50%;
-  border-width: 2px;
+  border-width: 1px;
+}
+.reaction:hover {
+  border-color: yellow;
+}
+.username-with-button {
+  display: flex;
+  justify-content: flex-end;
+  margin-right: 2vw;
+  height: 3vh;
+}
+.username-with-button button {
+  margin-right: 2vw;
+  height: 2vh;
+  align-self: center;
+}
+
+.username-with-button h6 {
+  font-size: 1em;
+  margin: 0;
+  align-self: center;
+}
+.message p {
+  display: flex;
+  justify-content: flex-start;
+  margin-left: 1vw;
+  flex-wrap: wrap;
+  width: 40vw;
+  text-align: left;
+  overflow-wrap: break-word;
+  word-break: break-all;
 }
 </style>

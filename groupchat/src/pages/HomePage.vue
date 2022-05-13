@@ -5,7 +5,8 @@
   <div v-else id="homepage">
     <div class="header">
       <button @click="goToProfile">Profile</button>
-      <SearchBar :user="user" />
+      <SearchBar :user="user" :groupId="-1" :addingGroupMember="false" />
+      <button @click="logout">Log Out</button>
     </div>
     <h1>Welcome, {{ user.username }}</h1>
     <div v-if="groups.length > 0">
@@ -136,6 +137,9 @@ export default {
         invitationGroup['invitationId'] = invitationIds.shift()
         this.invitationGroups.push(invitationGroup)
       }
+    },
+    logout() {
+      this.$router.push('/')
     }
   }
 }
@@ -173,7 +177,7 @@ input {
   margin: 0 2vw;
   background-color: white;
   border-color: black;
-  border-radius: 30%;
+  border-radius: 0;
   padding: .5vh 1vw;
 }
 </style>

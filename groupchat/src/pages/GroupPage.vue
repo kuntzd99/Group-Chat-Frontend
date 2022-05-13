@@ -1,11 +1,30 @@
 <template>
   <div id="grouppage">
     <div class="header">
+      <button @click="goHome">Home</button>
       <button @click="goToProfile">Profile</button>
-      <SearchBar :user="user" />
+      <SearchBar :user="user" :groupId="-1" :addingGroupMember="false" />
+      <button @click="logout">Log Out</button>
     </div>
     <div id="title">
+      <img :src="group.image" alt="group.name" />
+      <button class="image-button" v-if="group.creator === user.id && !editingImage" @click="toggleEditingImage">Change Image</button>
+      <div v-else-if="group.creator === user.id && editingImage">
+        <input type="text" :value="newImage" name="newImage" @input="handleChange" placeholder="upload image" />
+        <div class="button-container">
+          <button @click="toggleEditingImage">Cancel</button>
+          <button @click="submitImageChange" :disabled="!newImage">Change</button>
+        </div>
+      </div>
       <h1>{{ group.name }}</h1>
+      <button class="image-button" v-if="group.creator === user.id && !editingName" @click="toggleEditingName">Change Name</button>
+      <div v-else-if="group.creator === user.id && editingName">
+        <input type="text" :value="newName" name="newName" @input="handleChange" placeholder="new name" />
+        <div class="button-container">
+          <button @click="toggleEditingName">Cancel</button>
+          <button @click="submitNameChange" :disabled="!newName">Change</button>
+        </div>
+      </div>
       <h3>Created by <button @click="goToCreatorProfile">{{ this.creator.username }}</button></h3>
       <button v-if="group.creator === user.id" @click="deleteGroup">Delete Group</button>
     </div>
@@ -35,7 +54,7 @@
     <button v-else @click="togglePosting">Create Post</button>
     <h3>Members:</h3>
     <!-- <MemberCard v-for="member in members" :key="member.id" /> -->
-    <button>Send Invitation</button>
+    <SearchBar :user="user" :addingGroupMember="true" :groupId="group.id" @checkUser="checkUser" />
   </div>
 </template>
 
@@ -61,7 +80,11 @@ export default {
     posting: false,
     postMessages: [],
     caption: '',
-    creator: ''
+    creator: '',
+    editingImage: false,
+    newImage: '',
+    editingName: false,
+    newName: ''
   }),
   async mounted() {
     await this.getUser()
@@ -175,6 +198,52 @@ export default {
     },
     goToCreatorProfile() {
       this.$router.push(`/profile/${this.user.id}/${this.creator.id}`)
+    },
+    checkUser(userId) {
+      const memberIds = []
+      for (let i = 0; i < this.members.length; i++) {
+        memberIds.push(this.members[i].id)
+      }
+      if (memberIds.indexOf(userId) === -1) {
+        return true
+      } else {
+        return false
+      }
+    },
+    toggleEditingImage() {
+      this.editingImage = !this.editingImage
+    },
+    async submitImageChange() {
+      if (this.newImage.slice(0, 4) !== 'http') {
+        return window.alert('Please copy and paste an image address from the internet')
+      }
+      await axios.put(`http://localhost:8000/groups/${this.group.id}`, 
+        {
+          image: this.newImage,
+          name: this.group.name,
+          color: this.group.color,
+          membersCount: this.group.membersCount,
+          creator: this.group.creator
+        }
+      )
+      await this.getGroup()
+      this.editingImage = false
+    },
+    toggleEditingName() {
+      this.editingName = !this.editingName
+    },
+    async submitNameChange() {
+      await axios.put(`http://localhost:8000/groups/${this.group.id}`, 
+        {
+         name: this.newName,
+         color: this.group.color,
+         membersCount: this.group.membersCount,
+         creator: this.group.creator,
+         image: this.group.image
+       }
+      )
+      await this.getGroup()
+      this.editingName = false
     }
   }
 }
@@ -185,6 +254,7 @@ export default {
   display: flex;
   flex-direction: column;
   text-align: center;
+  align-items: center;
 }
 #title button {
   max-height: 3vh;
@@ -211,6 +281,9 @@ textarea {
   margin: 5vh 0;
   min-height: 20vh;
   height: 60vh;
+  z-index: 5;
+  --webkit-overflow-scrolling: touch;
+  overflow-y: auto;
 }
 textarea {
   width: 80vw;
@@ -227,7 +300,22 @@ textarea {
   margin: 0 2vw;
   background-color: white;
   border-color: black;
-  border-radius: 30%;
+  border-radius: 0;
   padding: .5vh 1vw;
+}
+#title img {
+  border-radius: 50%;
+  border-style: solid;
+  margin-top: 0.5vh;
+  border-width: .13em;
+  height: 50%;
+  width: 50%;
+}
+#title h1 {
+  margin: 0;
+  margin-top: 0.5vh;
+}
+.image-button {
+  margin: .5vh 0;
 }
 </style>

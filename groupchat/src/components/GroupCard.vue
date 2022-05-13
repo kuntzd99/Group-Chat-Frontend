@@ -1,8 +1,8 @@
 <template>
   <div id="group" :style="{'border-color': group.color}">
-    <!-- <div class="image-wrapper">
-      <img :src="game.background_image" :alt="game.name" />
-    </div> -->
+    <div class="image-wrapper">
+      <img :src="group.image" :alt="group.name" />
+    </div>
     <div>
       {{ group.name }}
       <p v-if="group.membersCount > 1">{{ group.membersCount }} members</p>
@@ -21,13 +21,24 @@
 </script>
 
 <style scoped>
+img {
+  height: 8vh;
+  width: 8vw;
+  border-radius: 50%;
+  margin-bottom: 2vh;
+}
+
 #group {
   border-style: solid;
-  border-radius: 20%;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  width: 30vw;
+  width: 12vw;
+  height: 20vh;
   margin: 2vh 0;
+}
+
+#group:hover {
+  border-color: yellow;
 }
 </style>
