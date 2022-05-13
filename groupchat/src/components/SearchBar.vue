@@ -7,7 +7,7 @@
     <button v-if="!addingGroupMember" @click="submitSearch">Go</button>
     <div v-else class="button-container">
       <button @click="stopSearching">Cancel</button>
-      <button @click="sendInvitation">Send Invite</button>
+      <button id="send-invite-button" @click="sendInvitation">Send Invite</button>
     </div>
   </div>
 </template>
@@ -20,7 +20,8 @@ export default {
   props: {
     user: {},
     addingGroupMember: Boolean,
-    groupId: Number
+    groupId: Number,
+    members: []
   },
   data: () => ({
     users: [],
@@ -49,11 +50,30 @@ export default {
       }
       return window.alert("User doesn't exist")
     },
+    checkUser(userId) {
+      const memberIds = []
+      for (let i = 0; i < this.members.length; i++) {
+        memberIds.push(this.members[i].id)
+      }
+      if (memberIds.indexOf(userId) === -1) {
+        return true
+      } else {
+        return false
+      }
+    },
     async sendInvitation() {
+      const invitationsRes = await axios.get('http://localhost:8000/invitations/')
       for (let i = 0; i < this.users.length; i++) {
         if (this.username === this.users[i].username) {
-          if (this.$emit('checkUser', this.users[i].id)) {
+          if (this.checkUser(this.users[i].id)) {
+            for (let j = 0; j < invitationsRes.data.length; j++) {
+              if (invitationsRes.data[j].user === this.users[i].id && invitationsRes.data[j].group === this.groupId) {
+                return window.alert('User already has an invite from this group')
+              }
+            }
             await axios.post('http://localhost:8000/invitations/', {user: this.users[i].id, group: this.groupId, sender: this.user.id})
+            this.username = ''
+            return this.searching = false
           } else {
             return window.alert("User already in group")
           }
@@ -74,5 +94,9 @@ export default {
   }
   .invitation-button {
     margin-bottom: 2vh;
+  }
+  input {
+    padding-right: 2vw;
+    margin-left: 1vw;
   }
 </style>

@@ -20,7 +20,12 @@
     </div>
     <div v-if="invitationGroups.length > 0">
       <h3>Invitations</h3>
-      <InvitationCard v-for="invitationGroup in invitationGroups" :key="invitationGroup.id" :user="user" :group="invitationGroup" @getInvitationGroups="getInvitationGroups" />
+      <InvitationCard v-for="invitationGroup in invitationGroups" :key="invitationGroup.id" 
+      :user="user" 
+      :group="invitationGroup" 
+      @getInvitationGroups="getInvitationGroups"
+      @getGroups="getGroups"
+      />
     </div>
     <div v-if="!creatingGroup">
       <button @click="toggleCreatingGroup">Create Group</button>
@@ -36,6 +41,7 @@
         </div>
       </form>
     </div>
+    <h3 v-if="invitationGroups.length === 0">No Group Invitations</h3>
   </div>
 </template>
 
@@ -72,6 +78,7 @@ export default {
       this.user = res.data
     },
     async getGroups() {
+      this.groups = []
       const groupIds = []
       const res = await axios.get('http://localhost:8000/memberships/')
       for (let i = 0; i < res.data.length; i++) {
@@ -119,6 +126,7 @@ export default {
       this.$router.push(`/profile/${this.user.id}/${this.user.id}`)
     },
     async getInvitationGroups() {
+      this.invitationGroups = []
       const groupIds = []
       const senderIds = []
       const invitationIds = []
@@ -157,9 +165,9 @@ input {
 }
 .groups-container {
   display: flex;
-  flex-direction: column;
+  flex-wrap: wrap;
   justify-content: center;
-  align-items: center;
+  grid-gap: 2em;
 }
 .button-container {
   margin-top: 2vh;

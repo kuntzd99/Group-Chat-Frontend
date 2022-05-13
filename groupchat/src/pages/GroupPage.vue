@@ -53,22 +53,30 @@
     </form>
     <button v-else @click="togglePosting">Create Post</button>
     <h3>Members:</h3>
-    <!-- <MemberCard v-for="member in members" :key="member.id" /> -->
-    <SearchBar :user="user" :addingGroupMember="true" :groupId="group.id" @checkUser="checkUser" />
+    <div class="members" :style="{'background-color': this.group.color}">
+      <MemberCard v-for="member in members" :key="member.id" :member="member" :user="user" />
+    </div>
+    <SearchBar 
+    :user="user" 
+    :addingGroupMember="true" 
+    :groupId="group.id" 
+    @checkUser="checkUser"
+    :members="members"
+    />
   </div>
 </template>
 
 <script>
 import axios from 'axios'
 import MessageCard from '../components/MessageCard.vue'
-// import MemberCard from '../components/MemberCard.vue'
+import MemberCard from '../components/MemberCard.vue'
 import SearchBar from '../components/SearchBar.vue'
 
 export default {
   name: 'GroupPage',
   components: {
     MessageCard,
-    // MemberCard,
+    MemberCard,
     SearchBar
   },
   data: () => ({
@@ -199,17 +207,6 @@ export default {
     goToCreatorProfile() {
       this.$router.push(`/profile/${this.user.id}/${this.creator.id}`)
     },
-    checkUser(userId) {
-      const memberIds = []
-      for (let i = 0; i < this.members.length; i++) {
-        memberIds.push(this.members[i].id)
-      }
-      if (memberIds.indexOf(userId) === -1) {
-        return true
-      } else {
-        return false
-      }
-    },
     toggleEditingImage() {
       this.editingImage = !this.editingImage
     },
@@ -244,6 +241,12 @@ export default {
       )
       await this.getGroup()
       this.editingName = false
+    },
+    logout() {
+      this.$router.push('/')
+    },
+    goHome() {
+      this.$router.push(`/home/${this.user.id}`)
     }
   }
 }
@@ -317,5 +320,14 @@ textarea {
 }
 .image-button {
   margin: .5vh 0;
+}
+.members {
+  display: flex;
+  --webkit-overflow-scrolling: touch;
+  overflow-x: auto;
+  justify-content: flex-start;
+  height: 15vh;
+  align-items: center;
+  margin-bottom: 1vh;
 }
 </style>
