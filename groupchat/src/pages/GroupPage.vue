@@ -175,8 +175,9 @@ export default {
     },
     removePostMessage(message) {
       const index = this.postMessages.indexOf(message)
+      console.log(index)
       if (index > -1) {
-        this.postMessages = this.postMessages.splice(index, 1)
+        this.postMessages.splice(index, 1)
       }
     },
     async createPost(e) {
