@@ -36,7 +36,6 @@
       },
       handleSubmit(e) {
         e.preventDefault()
-        console.log('submitting')
         let count = 0
         while (count < this.users.length) {
           // if (count >= this.users.length) {

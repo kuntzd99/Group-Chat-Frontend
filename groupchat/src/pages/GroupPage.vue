@@ -31,6 +31,7 @@
     <div class="messages-box" :style="{'background-color': this.group.color}">
       <MessageCard 
       v-for="message in messages" 
+      :group="group"
       :key="message.id" 
       :message="message" 
       :user="user" 

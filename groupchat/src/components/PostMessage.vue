@@ -1,15 +1,28 @@
 <template>
-  <div v-if="message.sender === post.user" class="user-message">
+  <div v-if="message.sender === post.user && !postPage" class="user-message">
     <div class="message-body">
       <h6 class="username">{{ message.senderUsername }}</h6>
       <div class="message">
         <p>{{ message.message }}</p>
       </div>
-      <!-- <div class="reactions">
-        <div class="reaction">{{ numLikes }} &#128077;</div>
-        <div class="reaction">{{ numDislikes }} &#128078;</div>
-        <div class="reaction">{{ numLaughs }} &#128514;</div>
-      </div> -->
+    </div>
+    <p>{{ new Date(message.time) }}</p>
+  </div>
+  <div v-else-if="message.sender === post.user && postPage" class="post-user-message">
+    <div class="message-body">
+      <h6 class="username">{{ message.senderUsername }}</h6>
+      <div class="message">
+        <p>{{ message.message }}</p>
+      </div>
+    </div>
+    <p>{{ new Date(message.time) }}</p>
+  </div>
+  <div v-else-if="message.sender !== post.user && postPage" class="post-nonuser-message">
+    <div class="message-body">
+      <h6 class="nonuser-username">{{ message.senderUsername }}</h6>
+      <div class="message">
+        <p>{{ message.message }}</p>
+      </div>
     </div>
     <p>{{ new Date(message.time) }}</p>
   </div>
@@ -19,11 +32,6 @@
       <div class="message">
         <p>{{ message.message }}</p>
       </div>
-      <!-- <div class="reactions">
-        <div class="reaction">{{ numLikes }} &#128077;</div>
-        <div class="reaction">{{ numDislikes }} &#128078;</div>
-        <div class="reaction">{{ numLaughs }} &#128514;</div>
-      </div> -->
     </div>
     <p>{{ new Date(message.time) }}</p>
   </div>
@@ -35,7 +43,8 @@ export default {
   props: {
     user: {},
     message: {},
-    post: {}
+    post: {},
+    postPage: Boolean
   }
 }
 </script>
@@ -50,6 +59,18 @@ export default {
   height: auto;
   align-self: flex-end;
   margin: 2vh 1vw 0.5vh 0;
+}
+.post-user-message {
+  width: 45vw;
+  height: auto;
+  align-self: flex-end;
+  margin: 2vh 1vw 0.5vh 0;
+}
+.post-nonuser-message {
+  width: 45vw;
+  height: auto;
+  align-self: flex-start;
+  margin: 2vh 0 0 1vw;
 }
 .nonuser-message {
   border-radius: 20%;
@@ -73,5 +94,15 @@ export default {
   margin: 1vh 0 0 1vw;
   font-size: 1em;
   align-self: center;
+}
+.message p {
+  display: flex;
+  justify-content: flex-start;
+  margin-left: 1vw;
+  flex-wrap: wrap;
+  width: 40vw;
+  text-align: left;
+  overflow-wrap: break-word;
+  word-break: break-all;
 }
 </style>

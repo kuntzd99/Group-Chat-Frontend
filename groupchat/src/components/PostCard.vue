@@ -1,8 +1,9 @@
 <template>
 <div>
-  <div class="messages-box" :style="{'background-color': post.groupColor}">
-    <PostMessage v-for="message in messages" :key="message.id" :message="message" :user="user" :post="post" />
+  <div @click="goToPostPage" class="messages-box" :style="{'background-color': post.groupColor}">
+    <PostMessage :postPage="false" v-for="message in messages" :key="message.id" :message="message" :user="user" :post="post" />
   </div>
+  <p>{{ post.caption }}</p>
   <div class="reactions">
     <button v-if="user.id === post.user" @click="deletePost">Delete</button>
     <div v-if="!liked" @click="() => addReaction('like')" class="reaction">{{ numLikes }} &#128077;</div>
@@ -20,7 +21,7 @@
   import PostMessage from './PostMessage'
 
   export default {
-    name: 'GroupCard',
+    name: 'PostCard',
     props: {
       user: {},
       post: {}
@@ -56,6 +57,9 @@
         }
         await axios.delete(`http://localhost:8000/posts/${this.post.id}`)
         this.$emit('getPosts')
+      },
+      goToPostPage() {
+        this.$router.push(`/posts/${this.user.id}/${this.post.id}`)
       }
     }
   }
@@ -73,6 +77,9 @@
   min-height: 20vh;
   --webkit-overflow-scrolling: touch;
   overflow-y: auto;
+}
+.messages-box:hover {
+  border-color: yellow;
 }
 .reactions {
   display: flex;

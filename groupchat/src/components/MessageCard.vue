@@ -1,5 +1,6 @@
 <template>
   <div v-if="message.sender == user.id && !posting" class="user-message">
+    <MessageDetails v-if="showingDetail" :likers="likers" :dislikers="dislikers" :laughers="laughers" :user="this.user" />
     <div class="message-body">
       <div class="username-with-button">
         <button @click="removeMessage">Delete</button>
@@ -15,6 +16,7 @@
         <div v-else @click="() => removeDislike(dislikedReactionId)" class="reaction">{{ numDislikes }} &#128078;</div>
         <div v-if="!laughing" @click="() => addReaction('laugh')" class="reaction">{{ numLaughs }} &#128514;</div>
         <div v-else @click="() => removeLaugh(laughingReactionId)" class="reaction">{{ numLaughs }} &#128514;</div>
+        <button :style="{'border-color': group.color}" class="view-message" @click="toggleShowingDetail">View</button>
       </div>
     </div>
     <p>{{ new Date(message.time) }}</p>
@@ -76,6 +78,7 @@
     <p>{{ new Date(message.time) }}</p>
   </div>
   <div v-else class="nonuser-message">
+    <MessageDetails v-if="showingDetail" :likers="likers" :dislikers="dislikers" :laughers="laughers" :user="this.user" />
     <div class="message-body">
       <h6 class="nonuser-username">{{ message.senderUsername }}</h6>
       <div class="message">
@@ -88,25 +91,16 @@
         <div v-else @click="() => removeDislike(dislikedReactionId)" class="reaction">{{ numDislikes }} &#128078;</div>
         <div v-if="!laughing" @click="() => addReaction('laugh')" class="reaction">{{ numLaughs }} &#128514;</div>
         <div v-else @click="() => removeLaugh(laughingReactionId)" class="reaction">{{ numLaughs }} &#128514;</div>
+        <button :style="{'border-color': group.color}" class="view-message" @click="toggleShowingDetail">View</button>
       </div>
     </div>
     <p>{{ new Date(message.time) }}</p>
-    <!-- <h6 class="username">{{ message.senderUsername }}</h6>
-    <p class="message">{{ message.message }}</p>
-    <div class="reactions">
-      <div v-if="!liked" @click="() => addReaction('like')" class="reaction">{{ numLikes }} &#128077;</div>
-      <div v-else @click="() => removeLike(likedReactionId)" class="reaction">{{ numLikes }} &#128077;</div>
-      <div v-if="!disliked" @click="() => addReaction('dislike')" class="reaction">{{ numDislikes }} &#128078;</div>
-      <div v-else @click="() => removeDislike(dislikedReactionId)" class="reaction">{{ numDislikes }} &#128078;</div>
-      <div v-if="!laughing" @click="() => addReaction('laughing')" class="reaction">{{ numLaughs }} &#128514;</div>
-      <div v-else @click="() => removeLaugh(laughingReactionId)" class="reaction">{{ numLaughs }} &#128514;</div>
-    </div>
-    <p>{{ new Date(message.time) }}</p> -->
   </div>
 </template>
 
 <script>
 import axios from 'axios'
+import MessageDetails from './MessageDetails.vue'
 
 export default {
   name: 'MessageCard',
@@ -115,6 +109,9 @@ export default {
     user: {},
     group: {},
     posting: Boolean
+  },
+  components: {
+    MessageDetails
   },
   data: () => ({
     reactions: [],
@@ -127,7 +124,11 @@ export default {
     likedReactionId: -1,
     dislikedReactionId: -1,
     laughingReactionId: -1,
-    clicked: false
+    clicked: false,
+    likers: [],
+    dislikers: [],
+    laughers: [],
+    showingDetail: false
   }),
   async mounted() {
     await this.getReactions()
@@ -137,12 +138,17 @@ export default {
       this.numLikes = 0
       this.numDislikes = 0
       this.numLaughs = 0
+      this.likers = []
+      this.dislikers = []
+      this.laughers = []
       const res = await axios.get('http://localhost:8000/reactions/')
       for (let i = 0; i < res.data.length; i++) {
         if (res.data[i].message === this.message.id) {
           this.reactions.push(res.data[i])
           if (res.data[i].type === 'like') {
             this.numLikes++
+            let reactionRes = await axios.get(`http://localhost:8000/users/${res.data[i].user}`)
+            this.likers.push(reactionRes.data)
             if (res.data[i].user === this.user.id) {
               this.liked = true
               this.likedReactionId = res.data[i].id
@@ -150,6 +156,8 @@ export default {
           }
           else if (res.data[i].type === 'dislike') {
             this.numDislikes++
+            let reactionRes = await axios.get(`http://localhost:8000/users/${res.data[i].user}`)
+            this.dislikers.push(reactionRes.data)
             if (res.data[i].user === this.user.id) {
               this.disliked = true
               this.dislikedReactionId = res.data[i].id
@@ -157,6 +165,8 @@ export default {
           }
           else if (res.data[i].type === 'laugh') {
             this.numLaughs++
+            let reactionRes = await axios.get(`http://localhost:8000/users/${res.data[i].user}`)
+            this.laughers.push(reactionRes.data)
             if (res.data[i].user === this.user.id) {
               this.laughing = true
               this.laughingReactionId = res.data[i].id
@@ -207,6 +217,9 @@ export default {
     removeFromPostMessages() {
       this.$emit('removePostMessage', this.message)
       this.toggleClicked()
+    },
+    toggleShowingDetail() {
+      this.showingDetail = !this.showingDetail
     }
   }
 }
@@ -224,7 +237,6 @@ export default {
   margin: 2vh 1vw 0.5vh 0;
 }
 .nonuser-message {
-  border-radius: 20%;
   margin: 2vh 0 0 1vw;
   align-self: flex-start;
 }
@@ -288,5 +300,12 @@ export default {
   text-align: left;
   overflow-wrap: break-word;
   word-break: break-all;
+}
+.view-message {
+  height: 2vh;
+  align-self: center;
+  background-color: white;
+  border-radius: 0;
+  border-width: 2px;
 }
 </style>

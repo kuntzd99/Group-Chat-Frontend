@@ -5,6 +5,7 @@ import LandingPage from './pages/LandingPage'
 import HomePage from './pages/HomePage'
 import GroupPage from './pages/GroupPage'
 import ProfilePage from './pages/ProfilePage'
+import PostPage from './pages/PostPage'
 
 const routes = [
   { path: '/', component: LandingPage, name: 'LandingPage' },
@@ -18,6 +19,11 @@ const routes = [
     path: '/profile/:user_id/:profile_id',
     component: ProfilePage,
     name: 'ProfilePage'
+  },
+  {
+    path: '/posts/:user_id/:post_id',
+    component: PostPage,
+    name: 'PostPage'
   }
 ]
 

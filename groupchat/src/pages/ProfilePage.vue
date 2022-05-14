@@ -13,7 +13,8 @@
         <button @click="toggleEditingImage" >Cancel</button>
         <button @click="handleImageSubmit">Submit</button>
       </div>
-      <h1>{{ profileUser.username }}</h1>
+      <h1 class="username">{{ profileUser.username }}</h1>
+      <p>{{ profileUser.bio }}</p>
     </div>
     <h3>{{ profileUser.username }}'s Posts</h3>
     <div id="posts">
@@ -129,5 +130,8 @@ export default {
   border-color: black;
   border-radius: 0;
   padding: .5vh 1vw;
+}
+.username {
+  margin: 1vh 0 0 0;
 }
 </style>
