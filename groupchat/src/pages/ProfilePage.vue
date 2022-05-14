@@ -1,7 +1,9 @@
 <template>
-  <div>
+  <div class = profile>
     <div class="header">
       <button @click="goHome">Home</button>
+      <SearchBar :user="user" :groupId="-1" :addingGroupMember="false" />
+      <button @click="logout">Log Out</button>
     </div>
     <div id="bio">
       <img v-if="!editingImage" :src="profileUser.image" alt="user" />
@@ -13,9 +15,9 @@
       </div>
       <h1>{{ profileUser.username }}</h1>
     </div>
+    <h3>{{ profileUser.username }}'s Posts</h3>
     <div id="posts">
-      <h3>{{ profileUser.username }}'s Posts</h3>
-      <PostCard v-for="post in posts" :key="post" :post="post" :user="user" />
+      <PostCard v-for="post in posts" :key="post" :post="post" :user="user" @getPosts="getPosts" />
     </div>
   </div>
 </template>
@@ -23,11 +25,13 @@
 <script>
 import axios from 'axios'
 import PostCard from '../components/PostCard'
+import SearchBar from '../components/SearchBar.vue'
 
 export default {
   name: 'ProfilePage',
   components: {
-    PostCard
+    PostCard,
+    SearchBar
   },
   data: () => ({
     user: {},
@@ -77,12 +81,16 @@ export default {
 </script>
 
 <style scoped>
+.profile {
+  text-align: center;
+}
 #bio {
   border-bottom: solid;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
+  margin-top: 2vh;
 }
 #bio img {
   width: 15vw;
@@ -106,8 +114,20 @@ export default {
 }
 #posts {
   display: flex;
-  flex-direction: column;
   align-items: center;
   text-align: center;
+}
+.header {
+  background-color: red;
+  height: 5vh;
+  display: flex;
+  align-items: center;
+}
+.header button {
+  margin: 0 2vw;
+  background-color: white;
+  border-color: black;
+  border-radius: 0;
+  padding: .5vh 1vw;
 }
 </style>

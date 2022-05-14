@@ -185,7 +185,8 @@ export default {
       const newPost = await axios.post('http://localhost:8000/posts/', 
       {
         user: this.user.id,
-        caption: this.caption
+        caption: this.caption,
+        groupColor: this.group.color
       }
       )
       for (let i = 0; i < this.postMessages.length; i++) {
@@ -248,6 +249,9 @@ export default {
     },
     goHome() {
       this.$router.push(`/home/${this.user.id}`)
+    },
+    goToProfile() {
+      this.$router.push( `/profile/${this.user.id}/${this.user.id}`)
     }
   }
 }

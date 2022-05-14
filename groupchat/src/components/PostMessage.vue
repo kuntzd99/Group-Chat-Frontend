@@ -1,15 +1,15 @@
 <template>
-  <div v-if="message.sender === post.user" class="nonuser-message">
+  <div v-if="message.sender === post.user" class="user-message">
     <div class="message-body">
       <h6 class="username">{{ message.senderUsername }}</h6>
       <div class="message">
         <p>{{ message.message }}</p>
       </div>
-      <div class="reactions">
+      <!-- <div class="reactions">
         <div class="reaction">{{ numLikes }} &#128077;</div>
         <div class="reaction">{{ numDislikes }} &#128078;</div>
         <div class="reaction">{{ numLaughs }} &#128514;</div>
-      </div>
+      </div> -->
     </div>
     <p>{{ new Date(message.time) }}</p>
   </div>
@@ -19,11 +19,11 @@
       <div class="message">
         <p>{{ message.message }}</p>
       </div>
-      <div class="reactions">
+      <!-- <div class="reactions">
         <div class="reaction">{{ numLikes }} &#128077;</div>
         <div class="reaction">{{ numDislikes }} &#128078;</div>
         <div class="reaction">{{ numLaughs }} &#128514;</div>
-      </div>
+      </div> -->
     </div>
     <p>{{ new Date(message.time) }}</p>
   </div>
@@ -55,6 +55,9 @@ export default {
   border-radius: 20%;
   margin: 2vh 0 0 1vw;
   align-self: flex-start;
+}
+.user-message, .nonuser-message {
+  width: 20vw;
 }
 .username {
   display: flex;
