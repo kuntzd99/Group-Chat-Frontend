@@ -9,14 +9,38 @@
       <button @click="logout">Log Out</button>
     </div>
     <h1>Welcome, {{ user.username }}</h1>
-    <div v-if="groups.length > 0">
-      <h3>Your Groups</h3>
-      <div class="groups-container">
-        <GroupCard v-for="group in groups" :key="group.id" :group="group" @click="() => selectGroup(group.id)" />
+    <div class="groups-and-posts">
+      <div>
+      <div v-if="groups.length > 0">
+        <h3>Your Groups</h3>
+        <div class="groups-container">
+          <GroupCard v-for="group in groups" :key="group.id" :group="group" @click="() => selectGroup(group.id)" />
+        </div>
       </div>
-    </div>
-    <div v-else>
-      <h3>No Groups</h3>
+      <div v-else>
+        <h3>No Groups</h3>
+      </div>
+      <div v-if="!creatingGroup">
+        <button @click="toggleCreatingGroup">Create Group</button>
+      </div>
+      <div v-else>
+        <form @submit="handleSubmit">
+          <input type="text" :value="groupName" name="groupName" placeholder="Name" @input="handleChange" />
+          <input type="text" :value="groupImage" name="groupImage" placeholder="Image (optional)" @input="handleChange" />
+          <input type="color" :value="groupColor" name="groupColor" @input="handleChange" />
+          <div class="button-container">
+            <button @click="toggleCreatingGroup">Cancel</button>
+            <button type="submit" :disabled="!groupName || !groupColor">Create Group</button>
+          </div>
+        </form>
+      </div>
+      </div>
+      <div>
+        <h3>Popular posts</h3>
+        <div id="posts">
+          <PostCard v-for="post in posts" :key="post" :post="post" :user="user" @getPosts="getPosts" />
+        </div>
+      </div>
     </div>
     <div v-if="invitationGroups.length > 0">
       <h3>Invitations</h3>
@@ -27,20 +51,6 @@
       @getGroups="getGroups"
       />
     </div>
-    <div v-if="!creatingGroup">
-      <button @click="toggleCreatingGroup">Create Group</button>
-    </div>
-    <div v-else>
-      <form @submit="handleSubmit">
-        <input type="text" :value="groupName" name="groupName" placeholder="Name" @input="handleChange" />
-        <input type="text" :value="groupImage" name="groupImage" placeholder="Image (optional)" @input="handleChange" />
-        <input type="color" :value="groupColor" name="groupColor" @input="handleChange" />
-        <div class="button-container">
-          <button @click="toggleCreatingGroup">Cancel</button>
-          <button type="submit" :disabled="!groupName || !groupColor">Create Group</button>
-        </div>
-      </form>
-    </div>
     <h3 v-if="invitationGroups.length === 0">No Group Invitations</h3>
   </div>
 </template>
@@ -50,13 +60,15 @@ import SearchBar from '../components/SearchBar'
 import axios from 'axios'
 import GroupCard from '../components/GroupCard'
 import InvitationCard from '../components/InvitationCard'
+import PostCard from '../components/PostCard.vue'
 
 export default {
   name: 'HomePage',
   components: {
     SearchBar,
     GroupCard,
-    InvitationCard
+    InvitationCard,
+    PostCard
   },
   data: () => ({
     user: {},
@@ -65,12 +77,14 @@ export default {
     groupColor: '',
     groupImage: '',
     creatingGroup: false,
-    invitationGroups: []
+    invitationGroups: [],
+    posts: []
   }),
   async mounted() {
     await this.getUser()
     await this.getGroups()
     await this.getInvitationGroups()
+    await this.getPosts()
   },
   methods: {
     async getUser() {
@@ -90,6 +104,10 @@ export default {
         let groupRes = await axios.get(`http://localhost:8000/groups/${groupIds[i]}`)
         this.groups.push(groupRes.data)
       }
+    },
+    async getPosts() {
+      const res = await axios.get('http://localhost:8000/posts/')
+      this.posts = res.data
     },
     async createGroup(packagedPayload) {
         const res = await axios.post('http://localhost:8000/groups/', packagedPayload)
@@ -187,5 +205,15 @@ input {
   border-color: black;
   border-radius: 0;
   padding: .5vh 1vw;
+}
+.groups-and-posts {
+  display: flex;
+  justify-content: space-evenly;
+  grid-gap: 5vw;
+}
+.posts {
+  height: 50vh;
+  --webkit-overflow-scrolling: touch;
+  overflow-y: auto;
 }
 </style>

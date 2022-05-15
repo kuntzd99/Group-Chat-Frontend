@@ -19,9 +19,23 @@
         </div> -->
       </div>
       <h3>Comments</h3>
-      Sort here
+      <div>
+        Sort by 
+        <select @change="handleSortChange">
+          <option value="time">Time</option>
+          <option value="likes">&#128077;</option>
+          <option value="dislikes">&#128078;</option>
+          <option value="laughs">&#128514;</option>
+        </select>
+        <button @click="sort">Sort</button>
+      </div>
       <div class="post">
-        <CommentMessage v-for="comment in comments" :key="comment.id" :comment="comment" :user="user" @getComments="getComments" />
+        <CommentMessage 
+        v-for="comment in comments" 
+        :key="comment.id" 
+        :comment="comment" 
+        :user="user" 
+        />
       </div>
       <form @submit="handleSubmit">
           <textarea @input="handleChange" placeholder="Enter comment here" :value="comment" name="comment" />
@@ -50,7 +64,8 @@ export default {
     postMessageIds: [],
     messages: [],
     comments: [],
-    comment: ''
+    comment: '',
+    sorting: 'likes'
   }),
   async mounted() {
     await this.getUser()
@@ -112,7 +127,29 @@ export default {
     },
     goHome() {
       this.$router.push(`/home/${this.user.id}`)
-    }
+    },
+    handleSortChange(e) {
+      e.preventDefault()
+      this.sorting = e.target.value
+    },
+    // sort() {
+    //   let sorted = this.comments
+    //   if (this.sorting === 'time') {
+        
+    //   } else {
+    //     const res = await axios.get('http://localhost:8000/commentreactions')
+    //     if (this.sorting === 'likes') {
+    //       for (let i = 0; i < sorted.length; i++) {
+    //         sorted[i]['likes'] = 0
+    //         for (let j = 0; j < res.data.length; j++) {
+    //           if (res.data[j].comment === sorted[i].id) {
+    //             sorted[i]['likes'] = sorted[i]['likes'] + 1
+    //           }
+    //         }
+    //       }
+    //     }
+    //   }
+    // }
   }
 }
 </script>

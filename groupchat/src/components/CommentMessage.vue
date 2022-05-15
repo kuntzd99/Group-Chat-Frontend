@@ -24,9 +24,9 @@
   <div v-else class="nonuser-message">
     <!-- <MessageDetails v-if="showingDetail" :likers="likers" :dislikers="dislikers" :laughers="laughers" :user="this.user" /> -->
     <div class="message-body">
-      <h6 class="nonuser-username">{{ message.senderUsername }}</h6>
+      <h6 class="nonuser-username">{{ comment.username }}</h6>
       <div class="message">
-        <p>{{ message.message }}</p>
+        <p>{{ comment.comment }}</p>
       </div>
       <div class="reactions">
         <div v-if="!liked" @click="() => addReaction('like')" class="reaction">{{ numLikes }} &#128077;</div>
