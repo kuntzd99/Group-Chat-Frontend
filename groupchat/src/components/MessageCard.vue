@@ -237,6 +237,8 @@ export default {
   margin: 2vh 1vw 0.5vh 0;
 }
 .nonuser-message {
+  width: 45vw;
+  height: auto;
   margin: 2vh 0 0 1vw;
   align-self: flex-start;
 }

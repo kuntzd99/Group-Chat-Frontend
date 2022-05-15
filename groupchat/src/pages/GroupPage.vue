@@ -152,7 +152,10 @@ export default {
         groupName: this.group.name, 
         senderUsername: this.user.username, 
         group: this.group.id, 
-        sender: this.user.id
+        sender: this.user.id,
+        likes: 0,
+        dislikes: 0,
+        laughs: 0
         }
       )
       this.message = ''

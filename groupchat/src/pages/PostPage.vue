@@ -34,6 +34,7 @@
         :key="comment.id" 
         :comment="comment" 
         :user="user" 
+        @updateComment="updateComment"
         />
       </div>
       <form @submit="handleSubmit">
@@ -113,6 +114,7 @@ export default {
           numComments++
         }
       }
+      this.sort()
       // add total to post table
       await axios.put(`http://localhost:8000/posts/${this.post.id}`, {
         user: this.post.user,
@@ -123,6 +125,32 @@ export default {
         comments: numComments
       })
       await this.getPost()
+    },
+    sort() {
+      let sorted = this.comments
+      if (this.sorting === 'time') {
+        sorted = sorted.sort((a, b) => {
+          let aDate = new Date(a.time)
+          let bDate = new Date(b.time)
+          return aDate.getTime() - bDate.getTime()
+        })
+        this.comments = sorted
+      } else if (this.sorting === 'likes') {
+        sorted = sorted.sort((a, b) => {
+          return b.likes - a.likes
+        })
+        this.comments = sorted
+      } else if (this.sorting === 'dislikes') {
+        sorted = sorted.sort((a, b) => {
+          return b.dislikes - a.dislikes
+        })
+        this.comments = sorted
+      } else if (this.sorting === 'laughs') {
+        sorted = sorted.sort((a, b) => {
+          return b.laughs - a.laughs
+        })
+        this.comments = sorted
+      }
     },
     async createComment(packagedPayload) {
       const res = await axios.post('http://localhost:8000/comments/', packagedPayload)
@@ -138,7 +166,10 @@ export default {
         comment: this.comment, 
         username: this.user.username, 
         post: this.post.id, 
-        user: this.user.id
+        user: this.user.id,
+        likes: 0,
+        dislikes: 0,
+        laughs: 0
         }
       )
       this.comment = ''
@@ -179,7 +210,6 @@ export default {
             }
           }
         }
-        console.log(numLaughs)
         await axios.put(`http://localhost:8000/posts/${this.post.id}`, {
           user: this.post.user,
           caption: this.post.caption,
@@ -210,6 +240,13 @@ export default {
       this.laughing = false
       this.laughingReactionId = -1
       await this.getPostReactions()
+    },
+    updateComment(id, newComment) {
+      for (let i = 0; i < this.comments.length; i++) {
+        if (this.comments[i].id === id) {
+          this.comments[i] = newComment
+        }
+      }
     }
   }
 }

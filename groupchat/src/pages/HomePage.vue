@@ -107,7 +107,11 @@ export default {
     },
     async getPosts() {
       const res = await axios.get('http://localhost:8000/posts/')
-      this.posts = res.data
+      let sorted = res.data
+      sorted = sorted.sort((a, b) => {
+        return a.comments - b.comments
+      })
+      this.posts = sorted
     },
     async createGroup(packagedPayload) {
         const res = await axios.post('http://localhost:8000/groups/', packagedPayload)

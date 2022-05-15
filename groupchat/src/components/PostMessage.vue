@@ -55,7 +55,6 @@ export default {
   border-style: solid;
 }
 .user-message {
-  width: 45vw;
   height: auto;
   align-self: flex-end;
   margin: 2vh 1vw 0.5vh 0;
@@ -73,7 +72,6 @@ export default {
   margin: 2vh 0 0 1vw;
 }
 .nonuser-message {
-  border-radius: 20%;
   margin: 2vh 0 0 1vw;
   align-self: flex-start;
 }

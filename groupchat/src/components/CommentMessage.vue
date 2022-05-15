@@ -10,12 +10,12 @@
         <p>{{ comment.comment }}</p>
       </div>
       <div class="reactions">
-        <div v-if="!liked" @click="() => addReaction('like')" class="reaction">{{ numLikes }} &#128077;</div>
-        <div v-else @click="() => removeLike(likedReactionId)" class="reaction">{{ numLikes }} &#128077;</div>
-        <div v-if="!disliked" @click="() => addReaction('dislike')" class="reaction">{{ numDislikes }} &#128078;</div>
-        <div v-else @click="() => removeDislike(dislikedReactionId)" class="reaction">{{ numDislikes }} &#128078;</div>
-        <div v-if="!laughing" @click="() => addReaction('laugh')" class="reaction">{{ numLaughs }} &#128514;</div>
-        <div v-else @click="() => removeLaugh(laughingReactionId)" class="reaction">{{ numLaughs }} &#128514;</div>
+        <div v-if="!liked" @click="() => addReaction('like')" class="reaction">{{ comment.likes }} &#128077;</div>
+        <div v-else @click="() => removeLike(likedReactionId)" class="reaction">{{ comment.likes }} &#128077;</div>
+        <div v-if="!disliked" @click="() => addReaction('dislike')" class="reaction">{{ comment.dislikes }} &#128078;</div>
+        <div v-else @click="() => removeDislike(dislikedReactionId)" class="reaction">{{ comment.dislikes }} &#128078;</div>
+        <div v-if="!laughing" @click="() => addReaction('laugh')" class="reaction">{{ comment.laughs }} &#128514;</div>
+        <div v-else @click="() => removeLaugh(laughingReactionId)" class="reaction">{{ comment.laughs }} &#128514;</div>
         <!-- <button :style="{'border-color': group.color}" class="view-message" @click="toggleShowingDetail">View</button> -->
       </div>
     </div>
@@ -29,12 +29,12 @@
         <p>{{ comment.comment }}</p>
       </div>
       <div class="reactions">
-        <div v-if="!liked" @click="() => addReaction('like')" class="reaction">{{ numLikes }} &#128077;</div>
-        <div v-else @click="() => removeLike(likedReactionId)" class="reaction">{{ numLikes }} &#128077;</div>
-        <div v-if="!disliked" @click="() => addReaction('dislike')" class="reaction">{{ numDislikes }} &#128078;</div>
-        <div v-else @click="() => removeDislike(dislikedReactionId)" class="reaction">{{ numDislikes }} &#128078;</div>
-        <div v-if="!laughing" @click="() => addReaction('laugh')" class="reaction">{{ numLaughs }} &#128514;</div>
-        <div v-else @click="() => removeLaugh(laughingReactionId)" class="reaction">{{ numLaughs }} &#128514;</div>
+        <div v-if="!liked" @click="() => addReaction('like')" class="reaction">{{ comment.likes }} &#128077;</div>
+        <div v-else @click="() => removeLike(likedReactionId)" class="reaction">{{ comment.likes }} &#128077;</div>
+        <div v-if="!disliked" @click="() => addReaction('dislike')" class="reaction">{{ comment.dislikes }} &#128078;</div>
+        <div v-else @click="() => removeDislike(dislikedReactionId)" class="reaction">{{ comment.dislikes }} &#128078;</div>
+        <div v-if="!laughing" @click="() => addReaction('laugh')" class="reaction">{{ comment.laughs }} &#128514;</div>
+        <div v-else @click="() => removeLaugh(laughingReactionId)" class="reaction">{{ comment.laughs }} &#128514;</div>
         <!-- <button :style="{'border-color': group.color}" class="view-message" @click="toggleShowingDetail">View</button> -->
       </div>
     </div>
@@ -52,55 +52,54 @@ export default {
     comment: {}
   },
   data: () => ({
-    reactions: [],
+    reactionIds: [],
     liked: false,
-    numLikes: 0,
-    numDislikes: 0,
-    numLaughs: 0,
     disliked: false,
     laughing: false,
     likedReactionId: -1,
     dislikedReactionId: -1,
     laughingReactionId: -1,
-
+    likers: [],
+    dislikers: [],
+    laughers: []
   }),
   async mounted() {
     await this.getReactions()
   },
   methods: {
     async getReactions() {
-      this.numLikes = 0
-      this.numDislikes = 0
-      this.numLaughs = 0
-      // this.likers = []
-      // this.dislikers = []
-      // this.laughers = []
+      let numLikes = 0
+      let numDislikes = 0
+      let numLaughs = 0
+      this.likers = []
+      this.dislikers = []
+      this.laughers = []
       const res = await axios.get('http://localhost:8000/commentreactions/')
       for (let i = 0; i < res.data.length; i++) {
         if (res.data[i].comment === this.comment.id) {
-          this.reactions.push(res.data[i])
+          this.reactionIds.push(res.data[i].id)
           if (res.data[i].type === 'like') {
-            this.numLikes++
-            // let reactionRes = await axios.get(`http://localhost:8000/users/${res.data[i].user}`)
-            // this.likers.push(reactionRes.data)
+            numLikes++
+            let reactionRes = await axios.get(`http://localhost:8000/users/${res.data[i].user}`)
+            this.likers.push(reactionRes.data)
             if (res.data[i].user === this.user.id) {
               this.liked = true
               this.likedReactionId = res.data[i].id
             }
           }
           else if (res.data[i].type === 'dislike') {
-            this.numDislikes++
-            // let reactionRes = await axios.get(`http://localhost:8000/users/${res.data[i].user}`)
-            // this.dislikers.push(reactionRes.data)
+            numDislikes++
+            let reactionRes = await axios.get(`http://localhost:8000/users/${res.data[i].user}`)
+            this.dislikers.push(reactionRes.data)
             if (res.data[i].user === this.user.id) {
               this.disliked = true
               this.dislikedReactionId = res.data[i].id
             }
           }
           else if (res.data[i].type === 'laugh') {
-            this.numLaughs++
-            // let reactionRes = await axios.get(`http://localhost:8000/users/${res.data[i].user}`)
-            // this.laughers.push(reactionRes.data)
+            numLaughs++
+            let reactionRes = await axios.get(`http://localhost:8000/users/${res.data[i].user}`)
+            this.laughers.push(reactionRes.data)
             if (res.data[i].user === this.user.id) {
               this.laughing = true
               this.laughingReactionId = res.data[i].id
@@ -108,6 +107,17 @@ export default {
           }
         }
       }
+      const newCommentRes = await axios.put(`http://localhost:8000/comments/${this.comment.id}`, {
+        post: this.comment.post,
+        comment: this.comment.comment,
+        user: this.comment.user,
+        username: this.comment.username,
+        likes: numLikes,
+        dislikes: numDislikes,
+        laughs: numLaughs,
+        time: this.comment.time
+      })
+      this.$emit('updateComment', this.comment.id, newCommentRes.data)
     },
     async removeComment() {
       const res = await axios.get('http://localhost:8000/commentreactions/')
