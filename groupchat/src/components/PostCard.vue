@@ -5,13 +5,9 @@
   </div>
   <p>{{ post.caption }}</p>
   <div class="reactions">
-    <button v-if="user.id === post.user" @click="deletePost">Delete</button>
-    <div v-if="!liked" @click="() => addReaction('like')" class="reaction">{{ numLikes }} &#128077;</div>
-    <div v-else @click="() => removeLike(likedReactionId)" class="reaction">{{ numLikes }} &#128077;</div>
-    <div v-if="!disliked" @click="() => addReaction('dislike')" class="reaction">{{ numDislikes }} &#128078;</div>
-    <div v-else @click="() => removeDislike(dislikedReactionId)" class="reaction">{{ numDislikes }} &#128078;</div>
-    <div v-if="!laughing" @click="() => addReaction('laugh')" class="reaction">{{ numLaughs }} &#128514;</div>
-    <div v-else @click="() => removeLaugh(laughingReactionId)" class="reaction">{{ numLaughs }} &#128514;</div>
+    <div class="reaction">{{ post.likes }} &#128077;</div>
+    <div class="reaction">{{ post.laughs }} &#128514;</div>
+    <div class="reaction">{{ post.comments }} &#128172;</div>
   </div>
 </div>
 </template>
@@ -31,10 +27,13 @@
     },
     data: () => ({
       messages: [],
-      postMessageIds: []
+      postMessageIds: [],
+      postReactionIds: []
     }),
     async mounted() {
       await this.getMessages()
+      await this.getPostReactions()
+      await this.getNumComments()
     },
     methods: {
       async getMessages() {
@@ -51,9 +50,52 @@
           this.messages.push(messageRes.data)
         }
       },
+      async getPostReactions() {
+        let numLikes = 0
+        let numLaughs = 0
+        const res = await axios.get('http://localhost:8000/postreactions/')
+        for (let i = 0; i < res.data.length; i++) {
+          if (res.data[i].post === this.post.id) {
+            this.postReactionIds.push(res.data[i].id)
+            if (res.data[i].type === 'like') {
+              numLikes++
+            } else if (res.data[i].type === 'laugh') {
+              numLaughs++
+            }
+          }
+        }
+        await axios.put(`http://localhost:8000/posts/${this.post.id}`, {
+          user: this.post.user,
+          caption: this.post.caption,
+          groupColor: this.post.groupColor,
+          likes: numLikes,
+          laughs: numLaughs,
+          comments: this.post.comments
+        })
+      },
+      async getNumComments() {
+        let numComments = 0
+        const res = await axios.get('http://localhost:8000/comments')
+        for (let i = 0; i < res.data.length; i++) {
+          if (res.data[i].post === this.post.id) {
+            numComments++
+          }
+        }
+        await axios.put(`http://localhost:8000/posts/${this.post.id}`, {
+          user: this.post.user,
+          caption: this.post.caption,
+          groupColor: this.post.groupColor,
+          likes: this.post.likes,
+          laughs: this.post.laughs,
+          comments: numComments
+        })
+      },
       async deletePost() {
         for (let i = 0; i < this.postMessageIds.length; i++) {
           await axios.delete(`http://localhost:8000/postmessages/${this.postMessageIds[i]}`)
+        }
+        for (let i = 0; i < this.postReactionIds.length; i++) {
+          await axios.delete(`http://localhost:8000/postreactions/${this.postReactionIds[i]}`)
         }
         await axios.delete(`http://localhost:8000/posts/${this.post.id}`)
         this.$emit('getPosts')

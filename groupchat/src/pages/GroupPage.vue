@@ -187,7 +187,10 @@ export default {
       {
         user: this.user.id,
         caption: this.caption,
-        groupColor: this.group.color
+        groupColor: this.group.color,
+        likes: 0,
+        laughs: 0,
+        comments: 0,
       }
       )
       for (let i = 0; i < this.postMessages.length; i++) {
