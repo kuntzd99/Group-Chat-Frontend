@@ -14,8 +14,14 @@
     },
     methods: {
       goToMembersProfile() {
-        this.$router.push(`/profile/${this.user.id}/${this.member.id}`)
-      }
+        this.$router.push(`/profile/${this.hashUserIdForProfilePage(this.user.id)}/${this.hashProfileIdForProfilePage(this.member.id)}`)
+      },
+      hashUserIdForProfilePage(integer) {
+        return integer * 31 + 19
+      },
+      hashProfileIdForProfilePage(integer) {
+      return integer * 13 - 392
+    },
     }
   }
 </script>

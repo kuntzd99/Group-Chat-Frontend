@@ -1,6 +1,8 @@
 <template>
   <div id="landing-page">
-    <h1>Welcome to Group-Chat</h1>
+    <div class="banner">
+      <h1 class="title">Group-Chat</h1>
+    </div>
     <LoginComponent :user="user" @setUser="setUser" />
     <RegisterComponent :user="user" @setUser="setUser" />
   </div>
@@ -27,10 +29,24 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
   #landing-page {
     display: flex;
     flex-direction: column;
     align-items: center;
+  }
+  .title {
+    font-size: 5em;
+    height: 15vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    font-family: 'Cairo', sans-serif;
+  }
+  .banner {
+    background-color: aquamarine;
+    width: 100vw;
+    display: flex;
+    justify-content: center;
   }
 </style>

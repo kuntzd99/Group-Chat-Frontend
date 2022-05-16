@@ -10,25 +10,13 @@
 </template>
 
 <script>
-  // import NavBar from './components/NavBar.vue'
-  // import LandingPage from './pages/LandingPage.vue'
-  // import HomePage from './pages/HomePage.vue'
-
-  export default {
-    name: 'App',
-    components: {
-      // NavBar,
-      // LandingPage,
-      // HomePage
-    }
-  //   ,
-  //   data: () => ({
-  //     user: {}
-  //   }),
-  //   methods: {
-  //    setUser(value) {
-  //      this.user = value
-  //    }
-  //  }
+export default {
+    name: 'App'
   }
 </script>
+
+<style>
+  body {
+    font-family: 'Open Sans', sans-serif;
+  };
+</style>

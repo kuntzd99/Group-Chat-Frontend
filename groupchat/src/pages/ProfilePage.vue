@@ -1,5 +1,5 @@
 <template>
-  <div class = profile>
+  <div class="profile">
     <div class="header">
       <button @click="goHome">Home</button>
       <SearchBar :user="user" :groupId="-1" :addingGroupMember="false" />
@@ -47,10 +47,22 @@ export default {
   },
   methods: {
     async getUsers() {
-      const userRes = await axios.get(`http://localhost:8000/users/${this.$route.params.user_id}`)
+      let userId = this.unhashUserIdFromProfilePage(this.$route.params.user_id)
+      const userRes = await axios.get(`http://localhost:8000/users/${userId}`)
       this.user = userRes.data
-      const profileUserRes = await axios.get(`http://localhost:8000/users/${this.$route.params.profile_id}`)
+      let profileUserId = this.unhashProfileIdFromProfilePage(this.$route.params.profile_id)
+      const profileUserRes = await axios.get(`http://localhost:8000/users/${profileUserId}`)
       this.profileUser = profileUserRes.data
+    },
+    unhashProfileIdFromProfilePage(integer) {
+      let result = parseInt(integer) + 392
+      result = result / 13
+      return result
+    },
+    unhashUserIdFromProfilePage(integer) {
+      let result = parseInt(integer) - 19
+      result = result / 31
+      return result
     },
     async getPosts() {
       this.posts = []
@@ -62,7 +74,10 @@ export default {
       }
     },
     goHome() {
-      this.$router.push(`/home/${this.user.id}`)
+      this.$router.push(`/home/${this.hashUserIdForHome(this.user.id)}`)
+    },
+    hashUserIdForHome(integer) {
+        return integer * 37 - 32
     },
     toggleEditingImage() {
       this.editingImage = !this.editingImage
@@ -76,6 +91,9 @@ export default {
       }
       await axios.put(`http://localhost:8000/users/${this.user.id}`, {image: this.image})
       await this.getUsers()
+    },
+    logout() {
+      this.$router.push('/')
     }
   }
 }
@@ -115,8 +133,11 @@ export default {
 }
 #posts {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
+  justify-content: center;
   text-align: center;
+  grid-gap: 2em;
 }
 .header {
   background-color: red;

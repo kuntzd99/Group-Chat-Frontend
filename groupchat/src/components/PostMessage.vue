@@ -6,7 +6,7 @@
         <p>{{ message.message }}</p>
       </div>
     </div>
-    <p>{{ new Date(message.time) }}</p>
+    <p>{{ message.time }}</p>
   </div>
   <div v-else-if="message.sender === post.user && postPage" class="post-user-message">
     <div class="message-body">
@@ -15,7 +15,7 @@
         <p>{{ message.message }}</p>
       </div>
     </div>
-    <p>{{ new Date(message.time) }}</p>
+    <p>{{ message.time }}</p>
   </div>
   <div v-else-if="message.sender !== post.user && postPage" class="post-nonuser-message">
     <div class="message-body">
@@ -24,7 +24,7 @@
         <p>{{ message.message }}</p>
       </div>
     </div>
-    <p>{{ new Date(message.time) }}</p>
+    <p>{{ message.time }}</p>
   </div>
   <div v-else class="nonuser-message">
     <div class="message-body">
@@ -33,7 +33,7 @@
         <p>{{ message.message }}</p>
       </div>
     </div>
-    <p>{{ new Date(message.time) }}</p>
+    <p>{{ message.time }}</p>
   </div>
 </template>
 

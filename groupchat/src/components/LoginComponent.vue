@@ -38,25 +38,29 @@
         e.preventDefault()
         let count = 0
         while (count < this.users.length) {
-          // if (count >= this.users.length) {
-          //   return window.alert("User doesn't exist")
-          // }
-          if (this.users[count].username === this.username && this.users[count].passwordDigest === this.password) {
+          console.log(this.hashPassword(this.password))
+          if (this.users[count].username === this.username && this.users[count].passwordDigest == this.hashPassword(this.password)) {
             this.$emit('setUser', this.users[count])
-            return this.$router.push(`/home/${this.users[count].id}`)
+            return this.$router.push(`/home/${this.hashUserIdForHome(this.users[count].id)}`)
           }
           count++
         }
         return window.alert("User doesn't exist")
-        // for (let i = 0; i < this.users.length; i++) {
-        //   // let passwordMatch = await bcrypt.compare(this.users[i].passwordDigest, this.password)
-        //   if (this.users[i].username === this.username && this.users[i].passwordDigest === this.password) {
-        //     // user = this.users[i]
-        //     this.$emit('setUser', this.users[i])
-        //     break
-        //   }
-        // }
-        // window.alert("User doesn't exist")
+      },
+      hashUserIdForHome(integer) {
+        return integer * 37 - 32
+      },
+      hashPassword(password) {
+        let hash = 0
+        if (password.length === 0) {
+          return hash
+        }
+        for (let i = 0; i < password.length; i++) {
+          let char = password.charCodeAt(i)
+          hash = (hash << 5) - hash + char
+          hash = hash & hash
+        }
+        return hash
       }
     }
   }

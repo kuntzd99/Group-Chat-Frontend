@@ -1,6 +1,6 @@
 <template>
   <div v-if="comment.user === user.id" class="user-message">
-    <!-- <MessageDetails v-if="showingDetail" :likers="likers" :dislikers="dislikers" :laughers="laughers" :user="this.user" /> -->
+    <MessageDetails v-if="showingDetail" :likers="likers" :dislikers="dislikers" :laughers="laughers" :user="this.user" :postPage="false" />
     <div class="message-body">
       <div class="username-with-button">
         <button @click="removeComment">Delete</button>
@@ -16,13 +16,13 @@
         <div v-else @click="() => removeDislike(dislikedReactionId)" class="reaction">{{ comment.dislikes }} &#128078;</div>
         <div v-if="!laughing" @click="() => addReaction('laugh')" class="reaction">{{ comment.laughs }} &#128514;</div>
         <div v-else @click="() => removeLaugh(laughingReactionId)" class="reaction">{{ comment.laughs }} &#128514;</div>
-        <!-- <button :style="{'border-color': group.color}" class="view-message" @click="toggleShowingDetail">View</button> -->
+        <button class="view-message" @click="toggleShowingDetail">View</button>
       </div>
     </div>
     <p>{{ comment.time }}</p>
   </div>
   <div v-else class="nonuser-message">
-    <!-- <MessageDetails v-if="showingDetail" :likers="likers" :dislikers="dislikers" :laughers="laughers" :user="this.user" /> -->
+    <MessageDetails v-if="showingDetail" :likers="likers" :dislikers="dislikers" :laughers="laughers" :user="this.user" :postPage="false" />
     <div class="message-body">
       <h6 class="nonuser-username">{{ comment.username }}</h6>
       <div class="message">
@@ -35,7 +35,7 @@
         <div v-else @click="() => removeDislike(dislikedReactionId)" class="reaction">{{ comment.dislikes }} &#128078;</div>
         <div v-if="!laughing" @click="() => addReaction('laugh')" class="reaction">{{ comment.laughs }} &#128514;</div>
         <div v-else @click="() => removeLaugh(laughingReactionId)" class="reaction">{{ comment.laughs }} &#128514;</div>
-        <!-- <button :style="{'border-color': group.color}" class="view-message" @click="toggleShowingDetail">View</button> -->
+        <button :style="{'border-color': group.color}" class="view-message" @click="toggleShowingDetail">View</button>
       </div>
     </div>
     <p>{{ comment.time }}</p>
@@ -44,9 +44,13 @@
 
 <script>
 import axios from 'axios'
+import MessageDetails from './MessageDetails.vue'
 
 export default {
   name: 'CommentMessage',
+  components: {
+    MessageDetails
+  },
   props: {
     user: {},
     comment: {}
@@ -60,7 +64,8 @@ export default {
     laughingReactionId: -1,
     likers: [],
     dislikers: [],
-    laughers: []
+    laughers: [],
+    showingDetail: false
   }),
   async mounted() {
     await this.getReactions()
@@ -148,7 +153,10 @@ export default {
       this.laughing = false
       this.laughingReactionId = -1
       await this.getReactions()
-    }
+    },
+    toggleShowingDetail() {
+      this.showingDetail = !this.showingDetail
+    },
   }
 }
 </script>
@@ -215,5 +223,12 @@ export default {
   text-align: left;
   overflow-wrap: break-word;
   word-break: break-all;
+}
+.view-message {
+  height: 2vh;
+  align-self: center;
+  background-color: white;
+  border-radius: 0;
+  border-width: 2px;
 }
 </style>

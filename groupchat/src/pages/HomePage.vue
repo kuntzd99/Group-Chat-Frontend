@@ -88,8 +88,14 @@ export default {
   },
   methods: {
     async getUser() {
-      const res = await axios.get(`http://localhost:8000/users/${this.$route.params.user_id}`)
+      let userId = this.unhashIdFromHome(this.$route.params.user_id)
+      const res = await axios.get(`http://localhost:8000/users/${userId}`)
       this.user = res.data
+    },
+    unhashIdFromHome(integer){
+      let result = parseInt(integer) + 32
+      result = result / 37
+      return result
     },
     async getGroups() {
       this.groups = []
@@ -142,10 +148,19 @@ export default {
       this.creatingGroup = false
     },
     selectGroup(groupId) {
-      this.$router.push(`/groups/${this.user.id}/${groupId}`)
+      this.$router.push(`/groups/${this.hashIdForGroupPage(this.user.id)}/${groupId}`)
+    },
+    hashIdForGroupPage(integer) {
+      return integer * 3 + 1234
     },
     goToProfile() {
-      this.$router.push(`/profile/${this.user.id}/${this.user.id}`)
+      this.$router.push(`/profile/${this.hashUserIdForProfilePage(this.user.id)}/${this.hashProfileIdForProfilePage(this.user.id)}`)
+    },
+    hashUserIdForProfilePage(integer) {
+      return integer * 31 + 19
+    },
+    hashProfileIdForProfilePage(integer) {
+      return integer * 13 - 392
     },
     async getInvitationGroups() {
       this.invitationGroups = []

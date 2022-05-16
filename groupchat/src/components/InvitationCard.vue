@@ -1,6 +1,6 @@
 <template>
   <div>
-    <p>Invitation for group {{ group.name }} from <button @click="goToSenderProfile">{{ sender.username }}</button></p>
+    <p>Invitation for group {{ group.name }} from <button class="username" @click="goToSenderProfile">{{ sender.username }}</button></p>
     <div>
       <button @click="decline">Decline</button>
       <button @click="accept">Accept</button>
@@ -46,7 +46,30 @@ export default {
     async decline() {
       await axios.delete(`http://localhost:8000/invitations/${this.group.invitationId}`)
       this.$emit('getInvitationGroups')
-    }
+    },
+    goToSenderProfile() {
+        this.$router.push(`/profile/${this.hashUserIdForProfilePage(this.user.id)}/${this.hashProfileIdForProfilePage(this.sender.id)}`)
+    },
+    hashUserIdForProfilePage(integer) {
+      return integer * 31 + 19
+    },
+    hashProfileIdForProfilePage(integer) {
+    return integer * 13 - 392
+    },
   }
 }
 </script>
+
+<style scoped>
+.username {
+  border-style: none;
+  background-color: white;
+  color: purple;
+  font-size: 1em;
+  margin: 0;
+  padding: 0;
+}
+.username:hover {
+  color: cyan;
+}
+</style>

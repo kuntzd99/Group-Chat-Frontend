@@ -9,7 +9,11 @@ import PostPage from './pages/PostPage'
 
 const routes = [
   { path: '/', component: LandingPage, name: 'LandingPage' },
-  { path: '/home/:user_id', component: HomePage, name: 'HomePage' },
+  {
+    path: '/home/:user_id/',
+    component: HomePage,
+    name: 'HomePage'
+  },
   {
     path: '/groups/:user_id/:group_id',
     component: GroupPage,

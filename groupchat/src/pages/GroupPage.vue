@@ -25,7 +25,7 @@
           <button @click="submitNameChange" :disabled="!newName">Change</button>
         </div>
       </div>
-      <h3>Created by <button @click="goToCreatorProfile">{{ this.creator.username }}</button></h3>
+      <h3 :style="{'display': 'flex'}">Created by <div class="username" @click="goToCreatorProfile">{{ this.creator.username }}</div></h3>
       <button v-if="group.creator === user.id" @click="deleteGroup">Delete Group</button>
     </div>
     <div>
@@ -116,8 +116,14 @@ export default {
   },
   methods: {
     async getUser() {
-      const res = await axios.get(`http://localhost:8000/users/${this.$route.params.user_id}`)
+      let userId = this.unhashIdFromGroupPage(this.$route.params.user_id)
+      const res = await axios.get(`http://localhost:8000/users/${userId}`)
       this.user = res.data
+    },
+    unhashIdFromGroupPage(integer) {
+      let result = parseInt(integer) - 1234
+      result = result / 3
+      return result
     },
     async getGroup() {
       const res = await axios.get(`http://localhost:8000/groups/${this.$route.params.group_id}`)
@@ -185,7 +191,10 @@ export default {
         }
       }
       await axios.delete(`http://localhost:8000/groups/${this.group.id}`)
-      return this.$router.push(`/home/${this.user.id}`)
+      return this.$router.push(`/home/${this.hashUserIdForHome(this.user.id)}`)
+    },
+    hashUserIdForHome(integer) {
+        return integer * 37 - 32
     },
     togglePosting() {
       this.posting = !this.posting
@@ -202,6 +211,9 @@ export default {
     },
     async createPost(e) {
       e.preventDefault()
+      let time = new Date()
+      time = time.toLocaleString()
+      let formattedTime = time.slice(0, time.length - 6) + time.slice(time.length - 3, time.length)
       const newPost = await axios.post('http://localhost:8000/posts/', 
       {
         user: this.user.id,
@@ -210,6 +222,7 @@ export default {
         likes: 0,
         laughs: 0,
         comments: 0,
+        time: formattedTime
       }
       )
       for (let i = 0; i < this.postMessages.length; i++) {
@@ -230,7 +243,13 @@ export default {
       this.caption = ''
     },
     goToCreatorProfile() {
-      this.$router.push(`/profile/${this.user.id}/${this.creator.id}`)
+      this.$router.push(`/profile/${this.hashUserIdForProfilePage(this.user.id)}/${this.hashProfileIdForProfilePage(this.creator.id)}`)
+    },
+    hashUserIdForProfilePage(integer) {
+      return integer * 31 + 19
+    },
+    hashProfileIdForProfilePage(integer) {
+      return integer * 13 - 392
     },
     toggleEditingImage() {
       this.editingImage = !this.editingImage
@@ -271,7 +290,7 @@ export default {
       this.$router.push('/')
     },
     goHome() {
-      this.$router.push(`/home/${this.user.id}`)
+      this.$router.push(`/home/${this.hashUserIdForHome(this.user.id)}`)
     },
     goToProfile() {
       this.$router.push( `/profile/${this.user.id}/${this.user.id}`)
@@ -392,5 +411,12 @@ textarea {
   height: 15vh;
   align-items: center;
   margin-bottom: 1vh;
+}
+.username {
+  margin: 0 0 0 0.5vw;
+  color: purple
+}
+.username:hover {
+  color: cyan;
 }
 </style>

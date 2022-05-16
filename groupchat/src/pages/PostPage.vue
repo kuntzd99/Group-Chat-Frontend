@@ -2,11 +2,13 @@
   <div>
     <div class="header">
       <button @click="goHome">Home</button>
+      <button @click="goToProfile">Profile</button>
       <SearchBar :user="user" :groupId="-1" :addingGroupMember="false" />
       <button @click="logout">Log Out</button>
     </div>
     <div class="post-page">
-      <h1>Post:</h1>
+      <h1 :style="{'display': 'flex'}">Post by <div class="username" @click="() => goToUserProfile(post.user)">{{ postCreator }}</div></h1>
+      <div>{{ post.time }}</div>
       <div class="post" :style="{'background-color': post.groupColor}">
         <PostMessage v-for="message in messages" :key="message.id" :message="message" :user="user" :post="post" :postPage="true" />
       </div>
@@ -17,12 +19,14 @@
         <div v-else @click="removeLaugh" :style="{'color': post.groupColor}" class="reaction">{{ post.laughs }} &#128514;</div>
         <div class="comment-reaction">{{ post.comments }} &#128172;</div>
       </div>
+       <MessageDetails v-if="showingDetail" :likers="likers" :dislikers="{}" :laughers="laughers" :user="this.user" :postPage="true" />
+       <button :style="{'border-color': post.groupColor}" class="view-message" @click="toggleShowingDetail">View Details</button>
       <h3>Comments</h3>
       <div>
         Sort by 
         <select @change="handleSortChange">
-          <option value="time">Time</option>
           <option value="likes">&#128077;</option>
+          <option value="time">Time</option>
           <option value="dislikes">&#128078;</option>
           <option value="laughs">&#128514;</option>
         </select>
@@ -50,17 +54,20 @@ import axios from 'axios'
 import SearchBar from '../components/SearchBar.vue'
 import PostMessage from '../components/PostMessage.vue'
 import CommentMessage from '../components/CommentMessage.vue'
+import MessageDetails from '../components/MessageDetails.vue'
 
 export default {
   name: 'PostPage',
   components: {
     SearchBar,
     PostMessage,
-    CommentMessage
+    CommentMessage,
+    MessageDetails
   },
   data: () => ({
     user: {},
     post: {},
+    postCreator: '',
     postMessageIds: [],
     messages: [],
     comments: [],
@@ -71,7 +78,8 @@ export default {
     laughers: [],
     likedReactionId: -1,
     laughingReactionId: -1,
-    sorting: 'likes'
+    sorting: 'likes',
+    showingDetail: false
   }),
   async mounted() {
     await this.getUser()
@@ -79,11 +87,18 @@ export default {
     await this.getPostReactions()
     await this.getMessages()
     await this.getComments()
+    await this.getPostCreator()
   },
   methods: {
     async getUser() {
-      const res = await axios.get(`http://localhost:8000/users/${this.$route.params.user_id}`)
+      let userId = this.unhashIdFromPostPage(this.$route.params.user_id)
+      const res = await axios.get(`http://localhost:8000/users/${userId}`)
       this.user = res.data
+    },
+    unhashIdFromPostPage(integer) {
+      let result = parseInt(integer) + 12
+      result = result / 75
+      return result
     },
     async getPost() {
       const res = await axios.get(`http://localhost:8000/posts/${this.$route.params.post_id}`)
@@ -121,7 +136,8 @@ export default {
         groupColor: this.post.groupColor,
         likes: this.post.likes,
         laughs: this.post.laughs,
-        comments: numComments
+        comments: numComments,
+        time: this.post.time
       })
       await this.getPost()
     },
@@ -149,6 +165,10 @@ export default {
         this.comments = sorted
       }
     },
+    async getPostCreator() {
+      const res = await axios.get(`http://localhost:8000/users/${this.post.user}`)
+      this.postCreator = res.data.username
+    },
     async createComment(packagedPayload) {
       const res = await axios.post('http://localhost:8000/comments/', packagedPayload)
       return res.data
@@ -158,6 +178,9 @@ export default {
     },
     async handleSubmit(e) {
       e.preventDefault()
+      let time = new Date()
+      time = time.toLocaleString()
+      let formattedTime = time.slice(0, time.length - 6) + time.slice(time.length - 3, time.length)
       await this.createComment(
         {
         comment: this.comment, 
@@ -166,14 +189,18 @@ export default {
         user: this.user.id,
         likes: 0,
         dislikes: 0,
-        laughs: 0
+        laughs: 0,
+        time: formattedTime
         }
       )
       this.comment = ''
       await this.getComments()
     },
     goHome() {
-      this.$router.push(`/home/${this.user.id}`)
+      this.$router.push(`/home/${this.hashUserIdForHome(this.user.id)}`)
+    },
+    hashUserIdForHome(integer) {
+        return integer * 37 - 32
     },
     handleSortChange(e) {
       e.preventDefault()
@@ -212,7 +239,8 @@ export default {
           groupColor: this.post.groupColor,
           likes: numLikes,
           laughs: numLaughs,
-          comments: this.post.comments
+          comments: this.post.comments,
+          time: this.post.time
         })
         await this.getPost()
     },
@@ -243,7 +271,25 @@ export default {
           this.comments[i] = newComment
         }
       }
-    }
+    },
+    goToUserProfile(userId) {
+      this.$router.push(`/profile/${this.hashUserIdForProfilePage(this.user.id)}/${this.hashProfileIdForProfilePage(userId)}`)
+    },
+    hashUserIdForProfilePage(integer) {
+      return integer * 31 + 19
+    },
+    hashProfileIdForProfilePage(integer) {
+      return integer * 13 - 392
+    },
+    toggleShowingDetail() {
+      this.showingDetail = !this.showingDetail
+    },
+    logout() {
+      this.$router.push('/')
+    },
+    goToProfile() {
+      this.$router.push(`/profile/${this.hashUserIdForProfilePage(this.user.id)}/${this.hashProfileIdForProfilePage(this.user.id)}`)
+    },
   }
 }
 </script>
@@ -313,5 +359,15 @@ export default {
 }
 .reaction:hover {
   border-color: yellow;
+}
+.username {
+  margin: 0 0 0 0.5vw;
+  color: purple
+}
+.username:hover {
+  color: cyan;
+}
+.view-message {
+  margin: 2vh 0 0 0;
 }
 </style>

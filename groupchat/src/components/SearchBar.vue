@@ -45,10 +45,16 @@ export default {
     submitSearch() {
       for (let i = 0; i < this.users.length; i++) {
         if (this.username === this.users[i].username) {
-          return this.$router.push(`/profile/${this.user.id}/${this.users[i].id}`)
+          return this.$router.push(`/profile/${this.hashUserIdForProfilePage(this.user.id)}/${this.hashProfileIdForProfilePage(this.users[i].id)}`)
         }
       }
       return window.alert("User doesn't exist")
+    },
+    hashUserIdForProfilePage(integer) {
+      return integer * 31 + 19
+    },
+    hashProfileIdForProfilePage(integer) {
+      return integer * 13 - 392
     },
     checkUser(userId) {
       const memberIds = []

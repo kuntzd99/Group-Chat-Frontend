@@ -1,6 +1,6 @@
 <template>
   <div v-if="message.sender == user.id && !posting" class="user-message">
-    <MessageDetails v-if="showingDetail" :likers="likers" :dislikers="dislikers" :laughers="laughers" :user="this.user" />
+    <MessageDetails v-if="showingDetail" :likers="likers" :dislikers="dislikers" :laughers="laughers" :user="this.user" :postPage="false" />
     <div class="message-body">
       <div class="username-with-button">
         <button @click="removeMessage">Delete</button>
@@ -11,15 +11,15 @@
       </div>
       <div class="reactions">
         <div v-if="!liked" @click="() => addReaction('like')" class="reaction">{{ message.likes }} &#128077;</div>
-        <div v-else @click="() => removeLike(likedReactionId)" class="reaction">{{ message.likes }} &#128077;</div>
+        <div v-else @click="() => removeLike(likedReactionId)" :style="{'color': group.color}" class="reaction">{{ message.likes }} &#128077;</div>
         <div v-if="!disliked" @click="() => addReaction('dislike')" class="reaction">{{ message.dislikes }} &#128078;</div>
-        <div v-else @click="() => removeDislike(dislikedReactionId)" class="reaction">{{ message.dislikes }} &#128078;</div>
+        <div v-else @click="() => removeDislike(dislikedReactionId)" :style="{'color': group.color}" class="reaction">{{ message.dislikes }} &#128078;</div>
         <div v-if="!laughing" @click="() => addReaction('laugh')" class="reaction">{{ message.laughs }} &#128514;</div>
-        <div v-else @click="() => removeLaugh(laughingReactionId)" class="reaction">{{ message.laughs }} &#128514;</div>
+        <div v-else @click="() => removeLaugh(laughingReactionId)" :style="{'color': group.color}" class="reaction">{{ message.laughs }} &#128514;</div>
         <button :style="{'border-color': group.color}" class="view-message" @click="toggleShowingDetail">View</button>
       </div>
     </div>
-    <p>{{ message.time }}</p>
+    <p class="time">{{ message.time }}</p>
   </div>
   <div v-else-if="message.sender == user.id && posting && !clicked" @click="addMessage" class="user-message">
     <div class="message-body">
@@ -78,7 +78,7 @@
     <p>{{ message.time }}</p>
   </div>
   <div v-else class="nonuser-message">
-    <MessageDetails v-if="showingDetail" :likers="likers" :dislikers="dislikers" :laughers="laughers" :user="this.user" />
+    <MessageDetails v-if="showingDetail" :likers="likers" :dislikers="dislikers" :laughers="laughers" :user="this.user" :postPage="false" />
     <div class="message-body">
       <h6 class="nonuser-username">{{ message.senderUsername }}</h6>
       <div class="message">
@@ -228,9 +228,6 @@ export default {
     toggleShowingDetail() {
       this.showingDetail = !this.showingDetail
     },
-    formatDate(date) {
-      return date
-    } 
   }
 }
 </script>

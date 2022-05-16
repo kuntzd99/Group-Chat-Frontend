@@ -42,10 +42,6 @@
         const res = await axios.post('http://localhost:8000/users/', packagedPayload)
         return res.data
       },
-      // async hashPassword(password) {
-      //   let hashedPassword = await bcrypt.hash(password, SALT_ROUNDS)
-      //   return hashedPassword
-      // },
       handleChange(e) {
         this[e.target.name] = e.target.value
       },
@@ -62,10 +58,25 @@
         if (this.image.slice(0, 4) !== 'http') {
           return window.alert('Please copy and paste an image address from the internet')
         }
-        // let passwordDigest = await this.hashPassword(this.password)
-        let newUser = await this.createUser({username: this.username, passwordDigest: this.password, image: this.image, bio: this.bio})
+        let passwordDigest = this.hashPassword(this.password)
+        let newUser = await this.createUser({username: this.username, passwordDigest: passwordDigest, image: this.image, bio: this.bio})
         this.$emit('setUser', newUser)
-        return this.$router.push(`/home/${newUser.id}`)
+        return this.$router.push(`/home/${this.hashUserIdForHome(newUser.id)}`)
+      }, 
+      hashUserIdForHome(integer) {
+        return integer * 37 - 32
+      },
+      hashPassword(password) {
+        let hash = 0
+        if (password.length === 0) {
+          return hash
+        }
+        for (let i = 0; i < password.length; i++) {
+          let char = password.charCodeAt(i)
+          hash = (hash << 5) - hash + char
+          hash = hash & hash
+        }
+        return hash
       }
     }
   }

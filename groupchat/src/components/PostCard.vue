@@ -45,10 +45,15 @@
             this.postMessageIds.push(res.data[i].id)
           }
         }
+        let sorted = []
         for (let i = 0; i < messageIds.length; i++) {
           const messageRes = await axios.get(`http://localhost:8000/messages/${messageIds[i]}`)
-          this.messages.push(messageRes.data)
+          sorted.push(messageRes.data)
         }
+        sorted = sorted.sort((a, b) => {
+          return new Date(a.time) - new Date(b.time)
+        })
+        this.messages = sorted
       },
       async getPostReactions() {
         let numLikes = 0
@@ -70,12 +75,13 @@
           groupColor: this.post.groupColor,
           likes: numLikes,
           laughs: numLaughs,
-          comments: this.post.comments
+          comments: this.post.comments,
+          time: this.post.time
         })
       },
       async getNumComments() {
         let numComments = 0
-        const res = await axios.get('http://localhost:8000/comments')
+        const res = await axios.get('http://localhost:8000/comments/')
         for (let i = 0; i < res.data.length; i++) {
           if (res.data[i].post === this.post.id) {
             numComments++
@@ -87,7 +93,8 @@
           groupColor: this.post.groupColor,
           likes: this.post.likes,
           laughs: this.post.laughs,
-          comments: numComments
+          comments: numComments,
+          time: this.post.time
         })
       },
       async deletePost() {
@@ -101,8 +108,11 @@
         this.$emit('getPosts')
       },
       goToPostPage() {
-        this.$router.push(`/posts/${this.user.id}/${this.post.id}`)
-      }
+        this.$router.push(`/posts/${this.hashUserIdForPostPage(this.user.id)}/${this.post.id}`)
+      },
+      hashUserIdForPostPage(integer) {
+      return integer * 75 - 12
+    },
     }
   }
 </script>
@@ -115,7 +125,7 @@
   border-radius: 10%;
   width: 45vw;
   height: 35vh;
-  margin: 5vh 0 0 0;
+  margin: 1vh 0 0 0;
   min-height: 20vh;
   --webkit-overflow-scrolling: touch;
   overflow-y: auto;
