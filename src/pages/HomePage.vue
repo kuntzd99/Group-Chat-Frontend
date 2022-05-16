@@ -205,6 +205,7 @@ input {
   flex-wrap: wrap;
   justify-content: center;
   grid-gap: 2em;
+  width: 45vw;
 }
 .button-container {
   margin-top: 2vh;
