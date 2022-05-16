@@ -293,7 +293,7 @@ export default {
       this.$router.push(`/home/${this.hashUserIdForHome(this.user.id)}`)
     },
     goToProfile() {
-      this.$router.push( `/profile/${this.user.id}/${this.user.id}`)
+      this.$router.push( `/profile/${this.hashUserIdForProfilePage(this.user.id)}/${this.hashProfileIdForProfilePage(this.user.id)}`)
     },
     updateMessage(id, newMessage) {
       for (let i = 0; i < this.messages.length; i++) {

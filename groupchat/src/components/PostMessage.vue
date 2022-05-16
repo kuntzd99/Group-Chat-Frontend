@@ -98,7 +98,6 @@ export default {
   justify-content: flex-start;
   margin-left: 1vw;
   flex-wrap: wrap;
-  width: 40vw;
   text-align: left;
   overflow-wrap: break-word;
   word-break: break-all;

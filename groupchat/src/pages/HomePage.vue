@@ -34,15 +34,7 @@
           </div>
         </form>
       </div>
-      </div>
-      <div>
-        <h3>Popular posts</h3>
-        <div id="posts">
-          <PostCard v-for="post in posts" :key="post" :post="post" :user="user" @getPosts="getPosts" />
-        </div>
-      </div>
-    </div>
-    <div v-if="invitationGroups.length > 0">
+      <div v-if="invitationGroups.length > 0">
       <h3>Invitations</h3>
       <InvitationCard v-for="invitationGroup in invitationGroups" :key="invitationGroup.id" 
       :user="user" 
@@ -52,6 +44,14 @@
       />
     </div>
     <h3 v-if="invitationGroups.length === 0">No Group Invitations</h3>
+      </div>
+      <div>
+        <h3>Popular posts</h3>
+        <div id="posts">
+          <PostCard v-for="post in posts" :key="post" :post="post" :user="user" @getPosts="getPosts" />
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -115,7 +115,7 @@ export default {
       const res = await axios.get('http://localhost:8000/posts/')
       let sorted = res.data
       sorted = sorted.sort((a, b) => {
-        return a.comments - b.comments
+        return b.comments - a.comments
       })
       this.posts = sorted
     },

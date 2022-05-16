@@ -27,11 +27,6 @@
       <div class="message">
           <p>{{ message.message }}</p>
       </div>
-      <div class="reactions">
-        <div class="reaction">{{ message.likes }} &#128077;</div>
-        <div class="reaction">{{ message.dislikes }} &#128078;</div>
-        <div class="reaction">{{ message.laughs }} &#128514;</div>
-      </div>
     </div>
     <p>{{ message.time }}</p>
   </div>
@@ -40,11 +35,6 @@
       <h6 class="username">{{ message.senderUsername }}</h6>
       <div class="message">
           <p>{{ message.message }}</p>
-      </div>
-      <div class="reactions">
-        <div class="reaction">{{ message.likes }} &#128077;</div>
-        <div class="reaction">{{ message.dislikes }} &#128078;</div>
-        <div class="reaction">{{ message.laughs }} &#128514;</div>
       </div>
     </div>
     <p>{{ message.time }}</p>
@@ -55,11 +45,6 @@
       <div class="message">
           <p>{{ message.message }}</p>
       </div>
-      <div class="reactions">
-        <div class="reaction">{{ message.likes }} &#128077;</div>
-        <div class="reaction">{{ message.dislikes }} &#128078;</div>
-        <div class="reaction">{{ message.laughs }} &#128514;</div>
-      </div>
     </div>
     <p>{{ message.time }}</p>
   </div>
@@ -68,11 +53,6 @@
       <h6 class="nonuser-username">{{ message.senderUsername }}</h6>
       <div class="message">
           <p>{{ message.message }}</p>
-      </div>
-      <div class="reactions">
-        <div class="reaction">{{ message.likes }} &#128077;</div>
-        <div class="reaction">{{ message.dislikes }} &#128078;</div>
-        <div class="reaction">{{ message.laughs }} &#128514;</div>
       </div>
     </div>
     <p>{{ message.time }}</p>
@@ -209,6 +189,12 @@ export default {
       for (let i = 0; i < res.data.length; i++) {
         if (res.data[i].message === this.message.id) {
           await axios.delete(`http://localhost:8000/reactions/${res.data[i].id}`)
+        }
+      }
+      const postMessageRes = await axios.get('http://localhost:8000/postmessages/')
+      for (let i = 0; i < postMessageRes.data.length; i++) {
+        if (postMessageRes.data[i].message === this.message.id) {
+          await axios.delete(`http://localhost:8000/postmessages/${postMessageRes.data[i].id}`)
         }
       }
       await axios.delete(`http://localhost:8000/messages/${this.message.id}`)

@@ -35,7 +35,7 @@
         <div v-else @click="() => removeDislike(dislikedReactionId)" class="reaction">{{ comment.dislikes }} &#128078;</div>
         <div v-if="!laughing" @click="() => addReaction('laugh')" class="reaction">{{ comment.laughs }} &#128514;</div>
         <div v-else @click="() => removeLaugh(laughingReactionId)" class="reaction">{{ comment.laughs }} &#128514;</div>
-        <button :style="{'border-color': group.color}" class="view-message" @click="toggleShowingDetail">View</button>
+        <button class="view-message" @click="toggleShowingDetail">View</button>
       </div>
     </div>
     <p>{{ comment.time }}</p>
