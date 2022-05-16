@@ -117,12 +117,12 @@ export default {
       this.likers = []
       this.dislikers = []
       this.laughers = []
-      const res = await axios.get('http://localhost:8000/reactions/')
+      const res = await axios.get('https://boiling-caverns-16943.herokuapp.com/reactions/')
       for (let i = 0; i < res.data.length; i++) {
         if (res.data[i].message === this.message.id) {
           if (res.data[i].type === 'like') {
             numLikes++
-            let reactionRes = await axios.get(`http://localhost:8000/users/${res.data[i].user}`)
+            let reactionRes = await axios.get(`https://boiling-caverns-16943.herokuapp.com/users/${res.data[i].user}`)
             this.likers.push(reactionRes.data)
             if (res.data[i].user === this.user.id) {
               this.liked = true
@@ -131,7 +131,7 @@ export default {
           }
           else if (res.data[i].type === 'dislike') {
             numDislikes++
-            let reactionRes = await axios.get(`http://localhost:8000/users/${res.data[i].user}`)
+            let reactionRes = await axios.get(`https://boiling-caverns-16943.herokuapp.com/users/${res.data[i].user}`)
             this.dislikers.push(reactionRes.data)
             if (res.data[i].user === this.user.id) {
               this.disliked = true
@@ -140,7 +140,7 @@ export default {
           }
           else if (res.data[i].type === 'laugh') {
             numLaughs++
-            let reactionRes = await axios.get(`http://localhost:8000/users/${res.data[i].user}`)
+            let reactionRes = await axios.get(`https://boiling-caverns-16943.herokuapp.com/users/${res.data[i].user}`)
             this.laughers.push(reactionRes.data)
             if (res.data[i].user === this.user.id) {
               this.laughing = true
@@ -149,7 +149,7 @@ export default {
           }
         }
       }
-      const newMessageRes = await axios.put(`http://localhost:8000/messages/${this.message.id}`, {
+      const newMessageRes = await axios.put(`https://boiling-caverns-16943.herokuapp.com/messages/${this.message.id}`, {
         message: this.message.message,
         groupName: this.message.groupName,
         senderUsername: this.message.senderUsername,
@@ -163,41 +163,41 @@ export default {
       this.$emit('updateMessage', this.message.id, newMessageRes.data)
     },
     async addReaction(type) {
-      await axios.post('http://localhost:8000/reactions/', {type: type, user: this.user.id, username: this.user.username, message: this.message.id})
+      await axios.post('https://boiling-caverns-16943.herokuapp.com/reactions/', {type: type, user: this.user.id, username: this.user.username, message: this.message.id})
       await this.getReactions()
     },
     async removeLike(reactionId) {
-      await axios.delete(`http://localhost:8000/reactions/${reactionId}`)
+      await axios.delete(`https://boiling-caverns-16943.herokuapp.com/reactions/${reactionId}`)
       this.liked = false
       this.likedReactionId = -1
       await this.getReactions()
     },
     async removeDislike(reactionId) {
-      await axios.delete(`http://localhost:8000/reactions/${reactionId}`)
+      await axios.delete(`https://boiling-caverns-16943.herokuapp.com/reactions/${reactionId}`)
       this.disliked = false
       this.dislikedReactionId = -1
       await this.getReactions()
     },
     async removeLaugh(reactionId) {
-      await axios.delete(`http://localhost:8000/reactions/${reactionId}`)
+      await axios.delete(`https://boiling-caverns-16943.herokuapp.com/reactions/${reactionId}`)
       this.laughing = false
       this.laughingReactionId = -1
       await this.getReactions()
     },
     async removeMessage() {
-      const res = await axios.get('http://localhost:8000/reactions/')
+      const res = await axios.get('https://boiling-caverns-16943.herokuapp.com/reactions/')
       for (let i = 0; i < res.data.length; i++) {
         if (res.data[i].message === this.message.id) {
-          await axios.delete(`http://localhost:8000/reactions/${res.data[i].id}`)
+          await axios.delete(`https://boiling-caverns-16943.herokuapp.com/reactions/${res.data[i].id}`)
         }
       }
-      const postMessageRes = await axios.get('http://localhost:8000/postmessages/')
+      const postMessageRes = await axios.get('https://boiling-caverns-16943.herokuapp.com/postmessages/')
       for (let i = 0; i < postMessageRes.data.length; i++) {
         if (postMessageRes.data[i].message === this.message.id) {
-          await axios.delete(`http://localhost:8000/postmessages/${postMessageRes.data[i].id}`)
+          await axios.delete(`https://boiling-caverns-16943.herokuapp.com/postmessages/${postMessageRes.data[i].id}`)
         }
       }
-      await axios.delete(`http://localhost:8000/messages/${this.message.id}`)
+      await axios.delete(`https://boiling-caverns-16943.herokuapp.com/messages/${this.message.id}`)
       this.$emit('getMessages')
     },
     toggleClicked() {

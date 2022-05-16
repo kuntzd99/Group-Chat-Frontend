@@ -48,10 +48,10 @@ export default {
   methods: {
     async getUsers() {
       let userId = this.unhashUserIdFromProfilePage(this.$route.params.user_id)
-      const userRes = await axios.get(`http://localhost:8000/users/${userId}`)
+      const userRes = await axios.get(`https://boiling-caverns-16943.herokuapp.com/users/${userId}`)
       this.user = userRes.data
       let profileUserId = this.unhashProfileIdFromProfilePage(this.$route.params.profile_id)
-      const profileUserRes = await axios.get(`http://localhost:8000/users/${profileUserId}`)
+      const profileUserRes = await axios.get(`https://boiling-caverns-16943.herokuapp.com/users/${profileUserId}`)
       this.profileUser = profileUserRes.data
     },
     unhashProfileIdFromProfilePage(integer) {
@@ -66,7 +66,7 @@ export default {
     },
     async getPosts() {
       this.posts = []
-      const res = await axios.get('http://localhost:8000/posts/')
+      const res = await axios.get('https://boiling-caverns-16943.herokuapp.com/posts/')
       for (let i = 0; i < res.data.length; i++) {
         if (res.data[i].user === this.profileUser.id) {
           this.posts.push(res.data[i])
@@ -89,7 +89,7 @@ export default {
       if (this.image.slice(0, 4) !== 'http') {
           return window.alert('Please copy and paste an image address from the internet')
       }
-      await axios.put(`http://localhost:8000/users/${this.user.id}`, {image: this.image})
+      await axios.put(`https://boiling-caverns-16943.herokuapp.com/users/${this.user.id}`, {image: this.image})
       await this.getUsers()
     },
     logout() {

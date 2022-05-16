@@ -258,7 +258,7 @@ export default {
       if (this.newImage.slice(0, 4) !== 'http') {
         return window.alert('Please copy and paste an image address from the internet')
       }
-      await axios.put(`http://localhost:8000/groups/${this.group.id}`, 
+      await axios.put(`https://boiling-caverns-16943.herokuapp.com/groups/${this.group.id}`, 
         {
           image: this.newImage,
           name: this.group.name,
@@ -274,7 +274,7 @@ export default {
       this.editingName = !this.editingName
     },
     async submitNameChange() {
-      await axios.put(`http://localhost:8000/groups/${this.group.id}`, 
+      await axios.put(`https://boiling-caverns-16943.herokuapp.com/groups/${this.group.id}`, 
         {
          name: this.newName,
          color: this.group.color,

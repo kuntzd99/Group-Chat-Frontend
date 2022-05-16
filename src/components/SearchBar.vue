@@ -30,7 +30,7 @@ export default {
   }),
   methods: {
     async startSearching() {
-      const res = await axios.get('http://localhost:8000/users/')
+      const res = await axios.get('https://boiling-caverns-16943.herokuapp.com/users/')
       this.users = res.data
       this.searching = true
     },

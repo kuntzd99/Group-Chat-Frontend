@@ -39,7 +39,7 @@
         this.users = res.data
       },
       async createUser(packagedPayload) {
-        const res = await axios.post('http://localhost:8000/users/', packagedPayload)
+        const res = await axios.post('https://boiling-caverns-16943.herokuapp.com/users/', packagedPayload)
         return res.data
       },
       handleChange(e) {

@@ -25,13 +25,13 @@ export default {
   },
   methods: {
     async getSender() {
-      const res = await axios.get(`http://localhost:8000/users/${this.group.senderId}`)
+      const res = await axios.get(`https://boiling-caverns-16943.herokuapp.com/users/${this.group.senderId}`)
       this.sender = res.data
     },
     async accept() {
-      await axios.post('http://localhost:8000/memberships/', {group: this.group.id, user: this.user.id})
-      await axios.delete(`http://localhost:8000/invitations/${this.group.invitationId}`)
-      await axios.put(`http://localhost:8000/groups/${this.group.id}`, 
+      await axios.post('https://boiling-caverns-16943.herokuapp.com/memberships/', {group: this.group.id, user: this.user.id})
+      await axios.delete(`https://boiling-caverns-16943.herokuapp.com/invitations/${this.group.invitationId}`)
+      await axios.put(`https://boiling-caverns-16943.herokuapp.com/groups/${this.group.id}`, 
         {
           name: this.group.name, 
           color: this.group.color,
@@ -44,7 +44,7 @@ export default {
       this.$emit('getInvitationGroups')
     },
     async decline() {
-      await axios.delete(`http://localhost:8000/invitations/${this.group.invitationId}`)
+      await axios.delete(`https://boiling-caverns-16943.herokuapp.com/invitations/${this.group.invitationId}`)
       this.$emit('getInvitationGroups')
     },
     goToSenderProfile() {
