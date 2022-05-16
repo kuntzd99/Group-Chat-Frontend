@@ -78,7 +78,7 @@ export default {
       this.likers = []
       this.dislikers = []
       this.laughers = []
-      const res = await axios.get('http://localhost:8000/commentreactions/')
+      const res = await axios.get('https://boiling-caverns-16943.herokuapp.com/commentreactions/')
       for (let i = 0; i < res.data.length; i++) {
         if (res.data[i].comment === this.comment.id) {
           if (res.data[i].type === 'like') {

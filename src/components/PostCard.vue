@@ -38,7 +38,7 @@
     methods: {
       async getMessages() {
         const messageIds = []
-        const res = await axios.get('http://localhost:8000/postmessages/')
+        const res = await axios.get('https://boiling-caverns-16943.herokuapp.com/postmessages/')
         for (let i = 0; i < res.data.length; i++) {
           if (res.data[i].post === this.post.id) {
             messageIds.push(res.data[i].message)
@@ -47,7 +47,7 @@
         }
         let sorted = []
         for (let i = 0; i < messageIds.length; i++) {
-          const messageRes = await axios.get(`http://localhost:8000/messages/${messageIds[i]}`)
+          const messageRes = await axios.get(`https://boiling-caverns-16943.herokuapp.com/messages/${messageIds[i]}`)
           sorted.push(messageRes.data)
         }
         sorted = sorted.sort((a, b) => {
@@ -58,7 +58,7 @@
       async getPostReactions() {
         let numLikes = 0
         let numLaughs = 0
-        const res = await axios.get('http://localhost:8000/postreactions/')
+        const res = await axios.get('https://boiling-caverns-16943.herokuapp.com/postreactions/')
         for (let i = 0; i < res.data.length; i++) {
           if (res.data[i].post === this.post.id) {
             this.postReactionIds.push(res.data[i].id)
@@ -69,7 +69,7 @@
             }
           }
         }
-        await axios.put(`http://localhost:8000/posts/${this.post.id}`, {
+        await axios.put(`https://boiling-caverns-16943.herokuapp.com/posts/${this.post.id}`, {
           user: this.post.user,
           caption: this.post.caption,
           groupColor: this.post.groupColor,
@@ -81,13 +81,13 @@
       },
       async getNumComments() {
         let numComments = 0
-        const res = await axios.get('http://localhost:8000/comments/')
+        const res = await axios.get('https://boiling-caverns-16943.herokuapp.com/comments/')
         for (let i = 0; i < res.data.length; i++) {
           if (res.data[i].post === this.post.id) {
             numComments++
           }
         }
-        await axios.put(`http://localhost:8000/posts/${this.post.id}`, {
+        await axios.put(`https://boiling-caverns-16943.herokuapp.com/posts/${this.post.id}`, {
           user: this.post.user,
           caption: this.post.caption,
           groupColor: this.post.groupColor,
@@ -99,12 +99,12 @@
       },
       async deletePost() {
         for (let i = 0; i < this.postMessageIds.length; i++) {
-          await axios.delete(`http://localhost:8000/postmessages/${this.postMessageIds[i]}`)
+          await axios.delete(`https://boiling-caverns-16943.herokuapp.com/postmessages/${this.postMessageIds[i]}`)
         }
         for (let i = 0; i < this.postReactionIds.length; i++) {
-          await axios.delete(`http://localhost:8000/postreactions/${this.postReactionIds[i]}`)
+          await axios.delete(`https://boiling-caverns-16943.herokuapp.com/postreactions/${this.postReactionIds[i]}`)
         }
-        await axios.delete(`http://localhost:8000/posts/${this.post.id}`)
+        await axios.delete(`https://boiling-caverns-16943.herokuapp.com/posts/${this.post.id}`)
         this.$emit('getPosts')
       },
       goToPostPage() {

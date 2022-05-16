@@ -117,7 +117,7 @@ export default {
   methods: {
     async getUser() {
       let userId = this.unhashIdFromGroupPage(this.$route.params.user_id)
-      const res = await axios.get(`http://localhost:8000/users/${userId}`)
+      const res = await axios.get(`https://boiling-caverns-16943.herokuapp.com/users/${userId}`)
       this.user = res.data
     },
     unhashIdFromGroupPage(integer) {
@@ -126,12 +126,12 @@ export default {
       return result
     },
     async getGroup() {
-      const res = await axios.get(`http://localhost:8000/groups/${this.$route.params.group_id}`)
+      const res = await axios.get(`https://boiling-caverns-16943.herokuapp.com/groups/${this.$route.params.group_id}`)
       this.group = res.data
     },
     async getMessages() {
       this.messages = []
-      const res = await axios.get('http://localhost:8000/messages/')
+      const res = await axios.get('https://boiling-caverns-16943.herokuapp.com/messages/')
       for (let i = 0; i < res.data.length; i++) {
         if (res.data[i].group === this.group.id) {
           this.messages.push(res.data[i])
@@ -141,22 +141,22 @@ export default {
     },
     async getMembers() {
       const userIds = []
-      const res = await axios.get('http://localhost:8000/memberships/')
+      const res = await axios.get('https://boiling-caverns-16943.herokuapp.com/memberships/')
       for (let i = 0; i < res.data.length; i++) {
         if (res.data[i].group === this.group.id) {
           userIds.push(res.data[i].user)
         }
       }
       for (let i = 0; i < userIds.length; i++) {
-        let userRes = await axios.get(`http://localhost:8000/users/${userIds[i]}`)
+        let userRes = await axios.get(`https://boiling-caverns-16943.herokuapp.com/users/${userIds[i]}`)
         this.members.push(userRes.data)
       }
     },
     async createMessage(packagedPayload) {
-      await axios.post('http://localhost:8000/messages/', packagedPayload)
+      await axios.post('https://boiling-caverns-16943.herokuapp.com/messages/', packagedPayload)
     },
     async getCreator() {
-      const res = await axios.get(`http://localhost:8000/users/${this.group.creator}`)
+      const res = await axios.get(`https://boiling-caverns-16943.herokuapp.com/users/${this.group.creator}`)
       this.creator = res.data
     },
     handleChange(e) {
@@ -184,13 +184,13 @@ export default {
       await this.getMessages()
     },
     async deleteGroup() {
-      const res = await axios.get('http://localhost:8000/memberships/')
+      const res = await axios.get('https://boiling-caverns-16943.herokuapp.com/memberships/')
       for (let i = 0; i < res.data.length; i++) {
         if (res.data[i].group === this.group.id) {
-          await axios.delete(`http://localhost:8000/memberships/${res.data[i].id}`)
+          await axios.delete(`https://boiling-caverns-16943.herokuapp.com/memberships/${res.data[i].id}`)
         }
       }
-      await axios.delete(`http://localhost:8000/groups/${this.group.id}`)
+      await axios.delete(`https://boiling-caverns-16943.herokuapp.com/groups/${this.group.id}`)
       return this.$router.push(`/home/${this.hashUserIdForHome(this.user.id)}`)
     },
     hashUserIdForHome(integer) {
@@ -214,7 +214,7 @@ export default {
       let time = new Date()
       time = time.toLocaleString()
       let formattedTime = time.slice(0, time.length - 6) + time.slice(time.length - 3, time.length)
-      const newPost = await axios.post('http://localhost:8000/posts/', 
+      const newPost = await axios.post('https://boiling-caverns-16943.herokuapp.com/posts/', 
       {
         user: this.user.id,
         caption: this.caption,
@@ -226,7 +226,7 @@ export default {
       }
       )
       for (let i = 0; i < this.postMessages.length; i++) {
-        await axios.post('http://localhost:8000/postmessages/', 
+        await axios.post('https://boiling-caverns-16943.herokuapp.com/postmessages/', 
         {
           post: newPost.data.id,
           message: this.postMessages[i].id

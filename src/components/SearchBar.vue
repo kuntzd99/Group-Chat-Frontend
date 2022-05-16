@@ -68,7 +68,7 @@ export default {
       }
     },
     async sendInvitation() {
-      const invitationsRes = await axios.get('http://localhost:8000/invitations/')
+      const invitationsRes = await axios.get('https://boiling-caverns-16943.herokuapp.com/invitations/')
       for (let i = 0; i < this.users.length; i++) {
         if (this.username === this.users[i].username) {
           if (this.checkUser(this.users[i].id)) {
@@ -77,7 +77,7 @@ export default {
                 return window.alert('User already has an invite from this group')
               }
             }
-            await axios.post('http://localhost:8000/invitations/', {user: this.users[i].id, group: this.groupId, sender: this.user.id})
+            await axios.post('https://boiling-caverns-16943.herokuapp.com/invitations/', {user: this.users[i].id, group: this.groupId, sender: this.user.id})
             this.username = ''
             return this.searching = false
           } else {

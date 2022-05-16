@@ -89,7 +89,7 @@ export default {
   methods: {
     async getUser() {
       let userId = this.unhashIdFromHome(this.$route.params.user_id)
-      const res = await axios.get(`http://localhost:8000/users/${userId}`)
+      const res = await axios.get(`https://boiling-caverns-16943.herokuapp.com/users/${userId}`)
       this.user = res.data
     },
     unhashIdFromHome(integer){
@@ -100,19 +100,19 @@ export default {
     async getGroups() {
       this.groups = []
       const groupIds = []
-      const res = await axios.get('http://localhost:8000/memberships/')
+      const res = await axios.get('https://boiling-caverns-16943.herokuapp.com/memberships/')
       for (let i = 0; i < res.data.length; i++) {
         if (res.data[i].user === this.user.id) {
           groupIds.push(res.data[i].group)
         }
       }
       for (let i = 0; i < groupIds.length; i++) {
-        let groupRes = await axios.get(`http://localhost:8000/groups/${groupIds[i]}`)
+        let groupRes = await axios.get(`https://boiling-caverns-16943.herokuapp.com/groups/${groupIds[i]}`)
         this.groups.push(groupRes.data)
       }
     },
     async getPosts() {
-      const res = await axios.get('http://localhost:8000/posts/')
+      const res = await axios.get('https://boiling-caverns-16943.herokuapp.com/posts/')
       let sorted = res.data
       sorted = sorted.sort((a, b) => {
         return b.comments - a.comments
@@ -120,7 +120,7 @@ export default {
       this.posts = sorted
     },
     async createGroup(packagedPayload) {
-        const res = await axios.post('http://localhost:8000/groups/', packagedPayload)
+        const res = await axios.post('https://boiling-caverns-16943.herokuapp.com/groups/', packagedPayload)
         return res.data
     },
     toggleCreatingGroup() {
@@ -143,7 +143,7 @@ export default {
         return window.alert('Please copy and paste an image address from the internet')
       }
       let newGroup = await this.createGroup({name: this.groupName, color: this.groupColor, membersCount: 1, creator: this.user.id, image: this.groupImage})
-      await axios.post('http://localhost:8000/memberships/', {group: newGroup.id, user: this.user.id})
+      await axios.post('https://boiling-caverns-16943.herokuapp.com/memberships/', {group: newGroup.id, user: this.user.id})
       this.getGroups()
       this.creatingGroup = false
     },
@@ -167,7 +167,7 @@ export default {
       const groupIds = []
       const senderIds = []
       const invitationIds = []
-      const invitationRes = await axios.get('http://localhost:8000/invitations/')
+      const invitationRes = await axios.get('https://boiling-caverns-16943.herokuapp.com/invitations/')
       for (let i = 0; i < invitationRes.data.length; i++) {
         if (invitationRes.data[i].user === this.user.id) {
           groupIds.push(invitationRes.data[i].group)
@@ -176,7 +176,7 @@ export default {
         }
       }
       for (let i = 0; i < groupIds.length; i++) {
-        let groupRes = await axios.get(`http://localhost:8000/groups/${groupIds[i]}`)
+        let groupRes = await axios.get(`https://boiling-caverns-16943.herokuapp.com/groups/${groupIds[i]}`)
         let invitationGroup = groupRes.data
         invitationGroup['senderId'] = senderIds.shift()
         invitationGroup['invitationId'] = invitationIds.shift()
