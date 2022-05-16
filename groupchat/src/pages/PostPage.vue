@@ -62,7 +62,6 @@ export default {
     user: {},
     post: {},
     postMessageIds: [],
-    postReactionIds: [],
     messages: [],
     comments: [],
     comment: '',
@@ -130,9 +129,7 @@ export default {
       let sorted = this.comments
       if (this.sorting === 'time') {
         sorted = sorted.sort((a, b) => {
-          let aDate = new Date(a.time)
-          let bDate = new Date(b.time)
-          return aDate.getTime() - bDate.getTime()
+          return new Date(a.time) - new Date(b.time)
         })
         this.comments = sorted
       } else if (this.sorting === 'likes') {
@@ -190,7 +187,6 @@ export default {
         const res = await axios.get('http://localhost:8000/postreactions/')
         for (let i = 0; i < res.data.length; i++) {
           if (res.data[i].post === this.post.id) {
-            this.postReactionIds.push(res.data[i].id)
             if (res.data[i].type == 'like') {
               numLikes++
               let reactionRes = await axios.get(`http://localhost:8000/users/${res.data[i].user}`)

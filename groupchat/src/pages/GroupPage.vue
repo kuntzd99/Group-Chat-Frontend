@@ -28,6 +28,16 @@
       <h3>Created by <button @click="goToCreatorProfile">{{ this.creator.username }}</button></h3>
       <button v-if="group.creator === user.id" @click="deleteGroup">Delete Group</button>
     </div>
+    <div>
+        Sort by 
+        <select @change="handleSortChange">
+          <option value="time">Time</option>
+          <option value="likes">&#128077;</option>
+          <option value="dislikes">&#128078;</option>
+          <option value="laughs">&#128514;</option>
+        </select>
+        <button @click="sort">Sort</button>
+      </div>
     <div class="messages-box" :style="{'background-color': this.group.color}">
       <MessageCard 
       v-for="message in messages" 
@@ -39,6 +49,7 @@
       :posting="posting"
       @addPostMessage="addPostMessage"
       @removePostMessage="removePostMessage"
+      @updateMessage="updateMessage"
       />
     </div>
     <form @submit="handleSubmit" v-if="!posting">
@@ -93,7 +104,8 @@ export default {
     editingImage: false,
     newImage: '',
     editingName: false,
-    newName: ''
+    newName: '',
+    sorting: 'time'
   }),
   async mounted() {
     await this.getUser()
@@ -119,6 +131,7 @@ export default {
           this.messages.push(res.data[i])
         }
       }
+      this.sort()
     },
     async getMembers() {
       const userIds = []
@@ -134,8 +147,7 @@ export default {
       }
     },
     async createMessage(packagedPayload) {
-      const res = await axios.post('http://localhost:8000/messages/', packagedPayload)
-      return res.data
+      await axios.post('http://localhost:8000/messages/', packagedPayload)
     },
     async getCreator() {
       const res = await axios.get(`http://localhost:8000/users/${this.group.creator}`)
@@ -146,6 +158,9 @@ export default {
     },
     async handleSubmit(e) {
       e.preventDefault()
+      let time = new Date()
+      time = time.toLocaleString()
+      let formattedTime = time.slice(0, time.length - 6) + time.slice(time.length - 3, time.length)
       await this.createMessage(
         {
         message: this.message, 
@@ -155,7 +170,8 @@ export default {
         sender: this.user.id,
         likes: 0,
         dislikes: 0,
-        laughs: 0
+        laughs: 0,
+        time: formattedTime
         }
       )
       this.message = ''
@@ -259,6 +275,41 @@ export default {
     },
     goToProfile() {
       this.$router.push( `/profile/${this.user.id}/${this.user.id}`)
+    },
+    updateMessage(id, newMessage) {
+      for (let i = 0; i < this.messages.length; i++) {
+        if (this.messages[i].id === id) {
+          this.messages[i] = newMessage
+        }
+      }
+    },
+    handleSortChange(e) {
+      e.preventDefault()
+      this.sorting = e.target.value
+    },
+    sort() {
+      let sorted = this.messages
+      if (this.sorting === 'time') {
+        sorted = sorted.sort((a, b) => {
+          return new Date(a.time) - new Date(b.time)
+        })
+        this.messages = sorted
+      } else if (this.sorting === 'likes') {
+        sorted = sorted.sort((a, b) => {
+          return b.likes - a.likes
+        })
+        this.messages = sorted
+      } else if (this.sorting === 'dislikes') {
+        sorted = sorted.sort((a, b) => {
+          return b.dislikes - a.dislikes
+        })
+        this.messages = sorted
+      } else if (this.sorting === 'laughs') {
+        sorted = sorted.sort((a, b) => {
+          return b.laughs - a.laughs
+        })
+        this.messages = sorted
+      }
     }
   }
 }

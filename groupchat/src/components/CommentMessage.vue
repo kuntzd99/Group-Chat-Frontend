@@ -19,7 +19,7 @@
         <!-- <button :style="{'border-color': group.color}" class="view-message" @click="toggleShowingDetail">View</button> -->
       </div>
     </div>
-    <p>{{ new Date(comment.time) }}</p>
+    <p>{{ comment.time }}</p>
   </div>
   <div v-else class="nonuser-message">
     <!-- <MessageDetails v-if="showingDetail" :likers="likers" :dislikers="dislikers" :laughers="laughers" :user="this.user" /> -->
@@ -38,7 +38,7 @@
         <!-- <button :style="{'border-color': group.color}" class="view-message" @click="toggleShowingDetail">View</button> -->
       </div>
     </div>
-    <p>{{ new Date(comment.time) }}</p>
+    <p>{{ comment.time }}</p>
   </div>
 </template>
 
@@ -52,7 +52,6 @@ export default {
     comment: {}
   },
   data: () => ({
-    reactionIds: [],
     liked: false,
     disliked: false,
     laughing: false,
@@ -77,7 +76,6 @@ export default {
       const res = await axios.get('http://localhost:8000/commentreactions/')
       for (let i = 0; i < res.data.length; i++) {
         if (res.data[i].comment === this.comment.id) {
-          this.reactionIds.push(res.data[i].id)
           if (res.data[i].type === 'like') {
             numLikes++
             let reactionRes = await axios.get(`http://localhost:8000/users/${res.data[i].user}`)
