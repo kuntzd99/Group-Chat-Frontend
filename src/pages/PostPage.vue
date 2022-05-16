@@ -13,6 +13,7 @@
       <div class="post" :style="{'background-color': post.groupColor}">
         <PostMessage v-for="message in messages" :key="message.id" :message="message" :user="user" :post="post" :postPage="true" />
       </div>
+      <p>{{ post.caption }}</p>
       <div class="reactions">
         <div v-if="!liked" @click="() => addReaction('like')" class="reaction">{{ post.likes }} &#128077;</div>
         <div v-else @click="removeLike" :style="{'color': post.groupColor}" class="reaction">{{ post.likes }} &#128077;</div>
