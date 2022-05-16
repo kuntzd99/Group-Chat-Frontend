@@ -9,6 +9,7 @@
     <div class="post-page">
       <h1 :style="{'display': 'flex'}">Post by <div class="username" @click="() => goToUserProfile(post.user)">{{ postCreator }}</div></h1>
       <div>{{ post.time }}</div>
+      <button v-if="post.user === user.id" @click="deletePost">Delete Post</button>
       <div class="post" :style="{'background-color': post.groupColor}">
         <PostMessage v-for="message in messages" :key="message.id" :message="message" :user="user" :post="post" :postPage="true" />
       </div>
@@ -290,6 +291,22 @@ export default {
     goToProfile() {
       this.$router.push(`/profile/${this.hashUserIdForProfilePage(this.user.id)}/${this.hashProfileIdForProfilePage(this.user.id)}`)
     },
+    async deletePost() {
+      for (let i = 0; i < this.postMessageIds.length; i++) {
+        await axios.delete(`http://localhost:8000/postmessages/${this.postMessageIds[i]}`)
+      }
+      for (let i = 0; i < this.comments.length; i++) {
+        await axios.delete(`http://localhost:8000/comments/${this.comments[i].id}`)
+      }
+      const res = await axios.get('http://localhost:8000/postreactions/')
+      for (let i = 0; i < res.data.length; i++) {
+        if (res.data[i].post === this.post.id) {
+          await axios.delete(`http://localhost:8000/postreactions/${res.data[i].id}`)
+        }
+      }
+      await axios.delete(`http://localhost:8000/posts/${this.post.id}`)
+      return this.$router.push(`/home/${this.hashUserIdForHome(this.user.id)}`)
+    }
   }
 }
 </script>
