@@ -190,6 +190,18 @@ export default {
           await axios.delete(`https://boiling-caverns-16943.herokuapp.com/memberships/${res.data[i].id}`)
         }
       }
+      const invitationRes = await axios.get('https://boiling-caverns-16943.herokuapp.com/invitations/')
+      for (let i = 0; i < invitationRes.data.length; i++) {
+        if (invitationRes.data[i].group === this.group.id) {
+          await axios.delete(`https://boiling-caverns-16943.herokuapp.com/invitations/${invitationRes.data[i].id}`)
+        }
+      }
+      const messageRes = await axios.get('https://boiling-caverns-16943.herokuapp.com/messages/')
+      for (let i = 0; i < messageRes.data.length; i++) {
+        if (messageRes.data[i].group === this.group.id) {
+          await axios.delete(`https://boiling-caverns-16943.herokuapp.com/messages/${messageRes.data[i].id}`)
+        }
+      }
       await axios.delete(`https://boiling-caverns-16943.herokuapp.com/groups/${this.group.id}`)
       return this.$router.push(`/home/${this.hashUserIdForHome(this.user.id)}`)
     },
