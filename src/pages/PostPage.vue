@@ -320,20 +320,7 @@ export default {
   align-items: center;
 }
 .header {
-  background-color: red;
-  height: 5vh;
-  display: flex;
-  align-items: center;
-}
-.header button {
-  margin: 0 2vw;
-  background-color: white;
-  border-color: black;
-  border-radius: 30%;
-  padding: .5vh 1vw;
-}
-.header {
-  background-color: red;
+  background-color: rgb(127, 174, 255);
   height: 5vh;
   display: flex;
   align-items: center;

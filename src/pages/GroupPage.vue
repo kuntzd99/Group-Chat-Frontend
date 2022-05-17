@@ -387,7 +387,7 @@ textarea {
   height: 5vh;
 }
 .header {
-  background-color: red;
+  background-color: rgb(127, 174, 255);
   height: 5vh;
   display: flex;
   align-items: center;
