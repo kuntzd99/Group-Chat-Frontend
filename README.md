@@ -6,14 +6,14 @@
 
 [Github](https://github.com/kuntzd99) | [LinkedIn](https://www.linkedin.com/in/daniel-kuntz-09a036207/)
 
-[Trello](https://trello.com/b/YUUdgbdd/group-chat)
-
 [Frontend Repo](https://github.com/kuntzd99/Group-Chat-Frontend)
 
 ---
 
 Website :
 [Group-Chat](https://immense-garden-67767.herokuapp.com/)
+
+[Back-End-Repository](https://github.com/kuntzd99/Group-Chat-Backend)
 
 ---
 
@@ -38,6 +38,8 @@ This website is created using:
 ### **_Getting Started_**
 
 Go to the website and register for an account. From there, you can create a group, invite other members, and start sending messages.
+
+---
 
 ### **_Credits_**
 
