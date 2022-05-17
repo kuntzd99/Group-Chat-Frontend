@@ -6,14 +6,12 @@
 
 [Github](https://github.com/kuntzd99) | [LinkedIn](https://www.linkedin.com/in/daniel-kuntz-09a036207/)
 
-[Frontend Repo](https://github.com/kuntzd99/Group-Chat-Frontend)
+[Back-End-Repository](https://github.com/kuntzd99/Group-Chat-Backend)
 
 ---
 
 Website :
 [Group-Chat](https://immense-garden-67767.herokuapp.com/)
-
-[Back-End-Repository](https://github.com/kuntzd99/Group-Chat-Backend)
 
 ---
 
